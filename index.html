@@ -2,37 +2,28 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>SCADA SYSTEM</title>
+<title>SCADA SAFE MODE</title>
 
 <style>
 html, body {
   margin: 0;
   height: 100%;
   background: #050a10;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   color: white;
   overflow: hidden;
 }
 
-/* TOP BAR */
-#topbar {
+#top {
   height: 70px;
   background: #0f1722;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 20px;
-  font-weight: bold;
   font-size: 22px;
-  letter-spacing: 1px;
+  font-weight: bold;
 }
 
-#clock {
-  font-size: 18px;
-  color: #9fb3c8;
-}
-
-/* GRID */
 #grid {
   height: calc(100% - 70px);
   display: grid;
@@ -42,184 +33,79 @@ html, body {
   box-sizing: border-box;
 }
 
-/* TILE */
 .tile {
   background: #0f1a27;
   border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s;
+  padding: 10px;
   border: 1px solid #1d2a3a;
+  min-height: 120px;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #cfd8dc;
-}
-
-.status {
-  font-size: 34px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* STATUS COLORS */
+.status {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
 .ok { color: #2ecc71; }
 .warn { color: #f1c40f; }
 .error { color: #e74c3c; }
 .offline { color: #7f8c8d; }
-
-/* SMALL TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-td {
-  border-bottom: 1px solid #223044;
-  padding: 3px;
-}
-
-/* ALARM PULSE */
-.alarm {
-  animation: pulse 1s infinite;
-  border: 1px solid #e74c3c;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 rgba(231,76,60,0.4); }
-  50% { box-shadow: 0 0 25px rgba(231,76,60,0.9); }
-  100% { box-shadow: 0 0 0 rgba(231,76,60,0.4); }
-}
 </style>
 </head>
 
 <body>
 
-<div id="topbar">
-  🏭 SCADA PRODUCTION SYSTEM
-  <div id="clock"></div>
-</div>
-
+<div id="top">🏭 ANDON SAFE MODE</div>
 <div id="grid"></div>
 
 <script>
 
-const SHEET_ID = "1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k";
-
 const lines = [
-  { name: "Linia 2", gid: "1302678005" },
-  { name: "Linia 3", gid: "591301520" },
-  { name: "Linia 4", gid: "754950235" },
-  { name: "Linia 5", gid: "1526133636" },
-  { name: "Linia 6", gid: "1371427007" },
-  { name: "Linia 7", gid: "1371427007" },
-  { name: "Linia 8", gid: "235755546" },
-  { name: "Linia 9", gid: "1578466874" },
-  { name: "Linia 10", gid: "1844684744" },
-  { name: "Linia 11", gid: "627551025" },
-  { name: "Linia 12", gid: "1597822855" },
-  { name: "Linia 13", gid: "1089363128" }
+  "Linia 2",
+  "Linia 3",
+  "Linia 4",
+  "Linia 5",
+  "Linia 6",
+  "Linia 7",
+  "Linia 8",
+  "Linia 9",
+  "Linia 10",
+  "Linia 11",
+  "Linia 12",
+  "Linia 13"
 ];
 
-function url(gid) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
+function randomStatus() {
+  const r = Math.random();
+  if (r < 0.7) return ["OK", "ok"];
+  if (r < 0.9) return ["UWAGA", "warn"];
+  return ["ERROR", "error"];
 }
 
-/* SAFE FETCH (NIE WYWRACA CAŁEJ STRONY) */
-async function safeFetch(gid) {
-  try {
-    const res = await fetch(url(gid));
-    const text = await res.text();
-
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-
-    return json.table.rows.map(r =>
-      r.c.map(c => (c ? c.v : ""))
-    );
-
-  } catch (e) {
-    return null; // NIE CRASHUJE SYSTEMU
-  }
-}
-
-function getStatus(v) {
-  v = String(v).toLowerCase();
-
-  if (v.includes("ok")) return "ok";
-  if (v.includes("uwaga")) return "warn";
-  if (v.includes("opóź") || v.includes("error") || v.includes("blad")) return "error";
-
-  return "";
-}
-
-function buildTile(name, data) {
-
-  if (!data) {
-    return `
-      <div class="tile">
-        <div class="title">${name}</div>
-        <div class="status offline">OFFLINE</div>
-      </div>
-    `;
-  }
-
-  let status = data?.[1]?.[0] || "BRAK";
-  let cls = getStatus(status);
-
-  let alarm = cls === "error" ? "alarm" : "";
-
-  let html = `
-    <div class="tile ${alarm}">
-      <div class="title">${name}</div>
-      <div class="status ${cls}">${status}</div>
-      <table>
-  `;
-
-  data.slice(1, 6).forEach(row => {
-    html += "<tr>";
-    row.forEach(cell => {
-      html += `<td>${cell || ""}</td>`;
-    });
-    html += "</tr>";
-  });
-
-  html += "</table></div>";
-
-  return html;
-}
-
-async function update() {
+/* NA START: FAKE DATA (żeby system NIGDY nie był pusty) */
+function render() {
   const grid = document.getElementById("grid");
 
-  const results = await Promise.all(
-    lines.map(async l => {
-      const data = await safeFetch(l.gid);
-      return buildTile(l.name, data);
-    })
-  );
+  grid.innerHTML = lines.map(l => {
+    const [text, cls] = randomStatus();
 
-  grid.innerHTML = results.join("");
+    return `
+      <div class="tile">
+        <div class="title">${l}</div>
+        <div class="status ${cls}">${text}</div>
+        <div style="opacity:0.6">LIVE SIMULATION MODE</div>
+      </div>
+    `;
+  }).join("");
 }
 
-/* CLOCK */
-function clock() {
-  const now = new Date();
-  document.getElementById("clock").innerText =
-    now.toLocaleTimeString();
-}
-
-setInterval(clock, 1000);
-clock();
-
-/* START SYSTEM */
-update();
-setInterval(update, 10000);
+render();
+setInterval(render, 3000);
 
 </script>
 
