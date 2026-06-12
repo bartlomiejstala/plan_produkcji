@@ -20,16 +20,18 @@ html, body {
   height: 100%;
 }
 
-/* iframe’y nakładane na siebie */
+/* iframe */
 iframe {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -40px;      /* 🔥 ukrywa górny pasek + część nagłówków */
+  left: -60px;     /* 🔥 ukrywa A/B/C */
+  width: calc(100% + 120px);
+  height: calc(100% + 80px);
   border: none;
+
   opacity: 0;
   transition: opacity 1.2s ease-in-out;
+  background: #000;
 }
 
 /* aktywny iframe */
@@ -42,6 +44,7 @@ iframe.active {
 iframe.inactive {
   opacity: 0;
   z-index: 1;
+  pointer-events: none;
 }
 </style>
 </head>
@@ -54,7 +57,9 @@ iframe.inactive {
 </div>
 
 <script>
-const baseUrl = "https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal";
+
+const baseUrl =
+  "https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal";
 
 const gids = [
   "1302678005", // 2
@@ -62,7 +67,7 @@ const gids = [
   "754950235",  // 4
   "1526133636", // 5
   "1371427007", // 6
-  "2052740737", // 7 
+  "2052740737", // 7
   "235755546",  // 8
   "1578466874", // 9
   "1844684744", // 10
@@ -81,17 +86,24 @@ let next = frameB;
 
 function switchTab() {
   const gid = gids[index];
+
+  // preload next
+  next.classList.remove("active");
+  next.classList.add("inactive");
+
   next.src = `${baseUrl}#gid=${gid}`;
 
-  // gdy iframe się załaduje → fade
   next.onload = () => {
+
+    // fade in next
     next.classList.add("active");
     next.classList.remove("inactive");
 
+    // fade out current
     current.classList.remove("active");
     current.classList.add("inactive");
 
-    // zamiana ról
+    // swap
     [current, next] = [next, current];
   };
 
@@ -101,8 +113,9 @@ function switchTab() {
 // start
 switchTab();
 
-// zmiana co 30 sekund
+// interval
 setInterval(switchTab, 30000);
+
 </script>
 
 </body>
