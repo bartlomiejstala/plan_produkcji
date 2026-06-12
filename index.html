@@ -2,111 +2,107 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>SCADA SAFE MODE</title>
+<title>Plan produkcji</title>
 
 <style>
 html, body {
   margin: 0;
+  width: 100%;
   height: 100%;
-  background: #050a10;
-  font-family: Arial;
-  color: white;
   overflow: hidden;
+  background: #000;
 }
 
-#top {
-  height: 70px;
-  background: #0f1722;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  font-size: 22px;
-  font-weight: bold;
+/* kontener */
+#container {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-#grid {
-  height: calc(100% - 70px);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 10px;
-  box-sizing: border-box;
+/* iframe’y nakładane na siebie */
+iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
 }
 
-.tile {
-  background: #0f1a27;
-  border-radius: 10px;
-  padding: 10px;
-  border: 1px solid #1d2a3a;
-  min-height: 120px;
+/* aktywny iframe */
+iframe.active {
+  opacity: 1;
+  z-index: 2;
 }
 
-.title {
-  font-weight: bold;
-  margin-bottom: 10px;
+/* nieaktywny */
+iframe.inactive {
+  opacity: 0;
+  z-index: 1;
 }
-
-.status {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.ok { color: #2ecc71; }
-.warn { color: #f1c40f; }
-.error { color: #e74c3c; }
-.offline { color: #7f8c8d; }
 </style>
 </head>
 
 <body>
 
-<div id="top">🏭 ANDON SAFE MODE</div>
-<div id="grid"></div>
+<div id="container">
+  <iframe id="frameA" class="active"></iframe>
+  <iframe id="frameB" class="inactive"></iframe>
+</div>
 
 <script>
+const baseUrl = "https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal";
 
-const lines = [
-  "Linia 2",
-  "Linia 3",
-  "Linia 4",
-  "Linia 5",
-  "Linia 6",
-  "Linia 7",
-  "Linia 8",
-  "Linia 9",
-  "Linia 10",
-  "Linia 11",
-  "Linia 12",
-  "Linia 13"
+const gids = [
+  "1302678005", // 2
+  "591301520",  // 3
+  "754950235",  // 4
+  "1526133636", // 5
+  "1371427007", // 6
+  "2052740737", // 7 
+  "235755546",  // 8
+  "1578466874", // 9
+  "1844684744", // 10
+  "627551025",  // 11
+  "1597822855", // 12
+  "1089363128"  // 13
 ];
 
-function randomStatus() {
-  const r = Math.random();
-  if (r < 0.7) return ["OK", "ok"];
-  if (r < 0.9) return ["UWAGA", "warn"];
-  return ["ERROR", "error"];
+let index = 0;
+
+const frameA = document.getElementById("frameA");
+const frameB = document.getElementById("frameB");
+
+let current = frameA;
+let next = frameB;
+
+function switchTab() {
+  const gid = gids[index];
+  next.src = `${baseUrl}#gid=${gid}`;
+
+  // gdy iframe się załaduje → fade
+  next.onload = () => {
+    next.classList.add("active");
+    next.classList.remove("inactive");
+
+    current.classList.remove("active");
+    current.classList.add("inactive");
+
+    // zamiana ról
+    [current, next] = [next, current];
+  };
+
+  index = (index + 1) % gids.length;
 }
 
-/* NA START: FAKE DATA (żeby system NIGDY nie był pusty) */
-function render() {
-  const grid = document.getElementById("grid");
+// start
+switchTab();
 
-  grid.innerHTML = lines.map(l => {
-    const [text, cls] = randomStatus();
-
-    return `
-      <div class="tile">
-        <div class="title">${l}</div>
-        <div class="status ${cls}">${text}</div>
-        <div style="opacity:0.6">LIVE SIMULATION MODE</div>
-      </div>
-    `;
-  }).join("");
-}
-
-render();
-setInterval(render, 3000);
-
+// zmiana co 30 sekund
+setInterval(switchTab, 30000);
 </script>
 
 </body>
