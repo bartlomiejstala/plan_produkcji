@@ -1,32 +1,130 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>ANDON BOARD</title>
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #0a0f14;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+/* HEADER */
+header {
+  height: 60px;
+  background: #111826;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* GRID */
+#grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 12px;
+  height: calc(100% - 60px);
+  box-sizing: border-box;
+}
+
+/* TILE */
+.tile {
+  background: #121a26;
+  border-radius: 10px;
+  padding: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+
+/* TITLE */
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #cfd8dc;
+}
+
+/* STATUS BIG */
+.status {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* COLORS */
+.ok { color: #2ecc71; }
+.warn { color: #f1c40f; }
+.error { color: #e74c3c; }
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+td, th {
+  border-bottom: 1px solid #223044;
+  padding: 4px;
+}
+
+/* blink alarm */
+.alarm {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { box-shadow: 0 0 5px #e74c3c; }
+  50% { box-shadow: 0 0 20px #e74c3c; }
+  100% { box-shadow: 0 0 5px #e74c3c; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🏭 ANDON BOARD — LIVE PRODUCTION STATUS
+</header>
+
+<div id="grid"></div>
+
 <script>
+
 const SHEET_ID = "1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k";
 
-const gids = [
-  "1302678005",
-  "591301520",
-  "754950235",
-  "1526133636",
-  "1371427007",
-  "1371427007",
-  "235755546",
-  "1578466874",
-  "1844684744",
-  "627551025",
-  "1597822855",
-  "1089363128"
+const lines = [
+  { name: "Linia 2", gid: "1302678005" },
+  { name: "Linia 3", gid: "591301520" },
+  { name: "Linia 4", gid: "754950235" },
+  { name: "Linia 5", gid: "1526133636" },
+  { name: "Linia 6", gid: "1371427007" },
+  { name: "Linia 7", gid: "1371427007" },
+  { name: "Linia 8", gid: "235755546" },
+  { name: "Linia 9", gid: "1578466874" },
+  { name: "Linia 10", gid: "1844684744" },
+  { name: "Linia 11", gid: "627551025" },
+  { name: "Linia 12", gid: "1597822855" },
+  { name: "Linia 13", gid: "1089363128" }
 ];
 
-let index = 0;
-
-function getUrl(gid) {
+function url(gid) {
   return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
 }
 
-async function loadSheet(gid) {
-  const res = await fetch(getUrl(gid));
+async function fetchSheet(gid) {
+  const res = await fetch(url(gid));
   const text = await res.text();
-
-  // Google zwraca JSON w wrapperze → trzeba go „odkleić”
   const json = JSON.parse(text.substring(47).slice(0, -2));
 
   return json.table.rows.map(r =>
@@ -34,42 +132,68 @@ async function loadSheet(gid) {
   );
 }
 
-function render(data) {
-  let html = "<table style='width:100%;color:white'>";
+function getStatus(cell) {
+  const v = String(cell).toLowerCase();
 
-  data.forEach((row, i) => {
-    html += "<tr>";
-    row.forEach(cell => {
-      if (i === 0) {
-        html += `<th>${cell}</th>`;
-      } else {
-        let cls = "";
+  if (v.includes("ok")) return "ok";
+  if (v.includes("uwaga")) return "warn";
+  if (v.includes("opóź") || v.includes("blad") || v.includes("error")) return "error";
 
-        if (String(cell).toLowerCase().includes("ok")) cls = "ok";
-        if (String(cell).toLowerCase().includes("opóź")) cls = "error";
-        if (String(cell).toLowerCase().includes("uwaga")) cls = "warn";
+  return "";
+}
 
-        html += `<td class="${cls}">${cell}</td>`;
-      }
+function buildTile(name, data) {
+  let statusText = "";
+  let statusClass = "";
+
+  if (data && data.length > 1 && data[1][0]) {
+    statusText = data[1][0];
+    statusClass = getStatus(statusText);
+  }
+
+  let alarm = statusClass === "error" ? "alarm" : "";
+
+  let html = `
+    <div class="tile ${alarm}">
+      <div class="title">${name}</div>
+      <div class="status ${statusClass}">${statusText || "BRAK DANYCH"}</div>
+      <table>
+  `;
+
+  if (data) {
+    data.slice(1, 6).forEach(row => {
+      html += "<tr>";
+      row.forEach(cell => {
+        html += `<td>${cell || ""}</td>`;
+      });
+      html += "</tr>";
     });
-    html += "</tr>";
-  });
+  }
 
-  html += "</table>";
+  html += "</table></div>";
+
   return html;
 }
 
-async function update() {
-  const gid = gids[index];
+async function updateBoard() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-  const data = await loadSheet(gid);
+  const results = await Promise.all(
+    lines.map(async line => {
+      const data = await fetchSheet(line.gid);
+      return buildTile(line.name, data);
+    })
+  );
 
-  document.getElementById("panel").innerHTML =
-    "<h2 style='color:white'>" + gid + "</h2>" + render(data);
-
-  index = (index + 1) % gids.length;
+  grid.innerHTML = results.join("");
 }
 
-setInterval(update, 30000);
-update();
+/* START */
+updateBoard();
+setInterval(updateBoard, 10000); // LIVE refresh co 10s
+
 </script>
+
+</body>
+</html>
