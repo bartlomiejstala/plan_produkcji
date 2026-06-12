@@ -1,47 +1,109 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pl">
 <head>
-
 <meta charset="UTF-8">
-
 <title>Plan produkcji</title>
 
 <style>
-
-html,body{
-margin:0;
-width:100%;
-height:100%;
-overflow:hidden;
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
 }
 
-iframe{
-width:100%;
-height:100%;
-border:none;
+/* kontener */
+#container {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
+/* iframe’y nakładane na siebie */
+iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+/* aktywny iframe */
+iframe.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* nieaktywny */
+iframe.inactive {
+  opacity: 0;
+  z-index: 1;
+}
 </style>
-
 </head>
 
 <body>
 
-<iframe
-src="https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal">
-</iframe>
+<div id="container">
+  <iframe id="frameA" class="active"></iframe>
+  <iframe id="frameB" class="inactive"></iframe>
+</div>
 
 <script>
+const baseUrl = "https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal";
 
-setTimeout(()=>{
+const gids = [
+  "1302678005", // 2
+  "591301520",  // 3
+  "754950235",  // 4
+  "1526133636", // 5
+  "1371427007", // 6
+  "2052740737", // 7 
+  "235755546",  // 8
+  "1578466874", // 9
+  "1844684744", // 10
+  "627551025",  // 11
+  "1597822855", // 12
+  "1089363128"  // 13
+];
 
-location.reload();
+let index = 0;
 
-},1200000);
+const frameA = document.getElementById("frameA");
+const frameB = document.getElementById("frameB");
 
+let current = frameA;
+let next = frameB;
+
+function switchTab() {
+  const gid = gids[index];
+  next.src = `${baseUrl}#gid=${gid}`;
+
+  // gdy iframe się załaduje → fade
+  next.onload = () => {
+    next.classList.add("active");
+    next.classList.remove("inactive");
+
+    current.classList.remove("active");
+    current.classList.add("inactive");
+
+    // zamiana ról
+    [current, next] = [next, current];
+  };
+
+  index = (index + 1) % gids.length;
+}
+
+// start
+switchTab();
+
+// zmiana co 30 sekund
+setInterval(switchTab, 30000);
 </script>
 
 </body>
-
 </html>
