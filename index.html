@@ -2,7 +2,10 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>DATA VIEW</title>
+<title>Plan produkcji</title>
+
+<!-- 🔥 FAVICON (LOGO W ZAKŁADCE) -->
+<link rel="icon" type="image/png" href="logo.png">
 
 <style>
 html, body {
@@ -20,32 +23,34 @@ html, body {
   height: 100%;
 }
 
-/* iframe - czysty podgląd */
+/* iframe (Google Sheets VIEW) */
 iframe {
   position: absolute;
 
-  /* 🔥 „crop” UI Google Sheets */
-  top: -45px;
-  left: -70px;
+  /* 🔥 crop UI Google (ukrywa nagłówki A/B/C i 1/2/3) */
+  top: -20px;
+  left: -30px;
   width: calc(100% + 140px);
   height: calc(100% + 90px);
 
   border: none;
+  background: #000;
+
   opacity: 0;
-  transition: opacity 1s ease-in-out;
-  background: black;
+  transition: opacity 1.2s ease-in-out;
 }
 
-/* aktywny */
+/* aktywny iframe */
 iframe.active {
   opacity: 1;
   z-index: 2;
 }
 
-/* nieaktywny */
+/* nieaktywny iframe */
 iframe.inactive {
   opacity: 0;
   z-index: 1;
+  pointer-events: none;
 }
 </style>
 </head>
@@ -63,18 +68,18 @@ const baseUrl =
   "https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal";
 
 const gids = [
-  "1302678005",
-  "591301520",
-  "754950235",
-  "1526133636",
-  "1371427007",
-  "2052740737",
-  "235755546",
-  "1578466874",
-  "1844684744",
-  "627551025",
-  "1597822855",
-  "1089363128"
+  "1302678005", // 2
+  "591301520",  // 3
+  "754950235",  // 4
+  "1526133636", // 5
+  "1371427007", // 6
+  "2052740737", // 7
+  "235755546",  // 8
+  "1578466874", // 9
+  "1844684744", // 10
+  "627551025",  // 11
+  "1597822855", // 12
+  "1089363128"  // 13
 ];
 
 let index = 0;
@@ -85,7 +90,7 @@ const frameB = document.getElementById("frameB");
 let current = frameA;
 let next = frameB;
 
-/* preload + switch */
+/* 🔄 przełączanie widoków */
 function switchView() {
 
   const gid = gids[index];
@@ -97,11 +102,11 @@ function switchView() {
 
   next.onload = () => {
 
-    // fade in
+    // fade in next
     next.classList.add("active");
     next.classList.remove("inactive");
 
-    // fade out
+    // fade out current
     current.classList.remove("active");
     current.classList.add("inactive");
 
@@ -115,7 +120,7 @@ function switchView() {
 /* start */
 switchView();
 
-/* rotate co 30s */
+/* zmiana co 30 sekund */
 setInterval(switchView, 30000);
 
 </script>
