@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+<meta charset="UTF-8">
+
+<title>Wyświetlacz arkuszy</title>
+
+<style>
+
+html,
+body{
+
+margin:0;
+padding:0;
+
+width:100%;
+height:100%;
+
+overflow:hidden;
+
+background:#111;
+
+font-family:Arial;
+
+}
+
+#sheet{
+
+width:100vw;
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+iframe{
+
+width:100%;
+height:100%;
+
+border:none;
+
+background:white;
+
+}
+
+#counter{
+
+position:fixed;
+
+top:10px;
+right:20px;
+
+padding:8px 14px;
+
+background:rgba(0,0,0,.6);
+
+color:white;
+
+font-size:18px;
+
+border-radius:10px;
+
+z-index:999;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="counter"></div>
+
+<div id="sheet">
+<iframe id="frame"></iframe>
+</div>
+
+<script>
+
+const BASE =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vRyB7xRS6GAnyRi_uoq-UPaED2RTWxn2UXzFC0JFJPnUG7-jwEF7BK_OeOPr4zMKN_t3MxtMk_Wvpfs/pubhtml";
+
+const START = 2;
+const END = 13;
+
+const TIME = 30000;
+
+let current = START;
+
+const frame =
+document.getElementById("frame");
+
+const counter =
+document.getElementById("counter");
+
+function load(){
+
+frame.src =
+`${BASE}?single=true&widget=true&headers=false&gid=${current}`;
+
+counter.innerText =
+`Zakładka ${current}`;
+
+current++;
+
+if(current > END){
+
+current = START;
+
+}
+
+}
+
+load();
+
+setInterval(load,TIME);
+
+document.addEventListener(
+"keydown",
+(e)=>{
+
+if(e.key==="f"){
+
+document.documentElement
+.requestFullscreen();
+
+}
+
+}
+);
+
+</script>
+
+</body>
+
+</html>
