@@ -2,51 +2,57 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>ANDON BOARD</title>
+<title>SCADA SYSTEM</title>
 
 <style>
 html, body {
   margin: 0;
   height: 100%;
-  background: #0a0f14;
+  background: #050a10;
   font-family: Arial, sans-serif;
   color: white;
+  overflow: hidden;
 }
 
-/* HEADER */
-header {
-  height: 60px;
-  background: #111826;
+/* TOP BAR */
+#topbar {
+  height: 70px;
+  background: #0f1722;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 20px;
-  font-size: 20px;
   font-weight: bold;
+  font-size: 22px;
   letter-spacing: 1px;
+}
+
+#clock {
+  font-size: 18px;
+  color: #9fb3c8;
 }
 
 /* GRID */
 #grid {
+  height: calc(100% - 70px);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  padding: 12px;
-  height: calc(100% - 60px);
+  gap: 10px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
 /* TILE */
 .tile {
-  background: #121a26;
+  background: #0f1a27;
   border-radius: 10px;
   padding: 12px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: 0.3s;
+  border: 1px solid #1d2a3a;
 }
 
-/* TITLE */
 .title {
   font-size: 18px;
   font-weight: bold;
@@ -54,48 +60,51 @@ header {
   color: #cfd8dc;
 }
 
-/* STATUS BIG */
 .status {
-  font-size: 28px;
+  font-size: 34px;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-/* COLORS */
+/* STATUS COLORS */
 .ok { color: #2ecc71; }
 .warn { color: #f1c40f; }
 .error { color: #e74c3c; }
+.offline { color: #7f8c8d; }
 
-/* TABLE */
+/* SMALL TABLE */
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  opacity: 0.9;
 }
 
-td, th {
+td {
   border-bottom: 1px solid #223044;
-  padding: 4px;
+  padding: 3px;
 }
 
-/* blink alarm */
+/* ALARM PULSE */
 .alarm {
-  animation: blink 1s infinite;
+  animation: pulse 1s infinite;
+  border: 1px solid #e74c3c;
 }
 
-@keyframes blink {
-  0% { box-shadow: 0 0 5px #e74c3c; }
-  50% { box-shadow: 0 0 20px #e74c3c; }
-  100% { box-shadow: 0 0 5px #e74c3c; }
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 rgba(231,76,60,0.4); }
+  50% { box-shadow: 0 0 25px rgba(231,76,60,0.9); }
+  100% { box-shadow: 0 0 0 rgba(231,76,60,0.4); }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-🏭 ANDON BOARD — LIVE PRODUCTION STATUS
-</header>
+<div id="topbar">
+  🏭 SCADA PRODUCTION SYSTEM
+  <div id="clock"></div>
+</div>
 
 <div id="grid"></div>
 
@@ -122,76 +131,95 @@ function url(gid) {
   return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
 }
 
-async function fetchSheet(gid) {
-  const res = await fetch(url(gid));
-  const text = await res.text();
-  const json = JSON.parse(text.substring(47).slice(0, -2));
+/* SAFE FETCH (NIE WYWRACA CAŁEJ STRONY) */
+async function safeFetch(gid) {
+  try {
+    const res = await fetch(url(gid));
+    const text = await res.text();
 
-  return json.table.rows.map(r =>
-    r.c.map(c => (c ? c.v : ""))
-  );
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+
+    return json.table.rows.map(r =>
+      r.c.map(c => (c ? c.v : ""))
+    );
+
+  } catch (e) {
+    return null; // NIE CRASHUJE SYSTEMU
+  }
 }
 
-function getStatus(cell) {
-  const v = String(cell).toLowerCase();
+function getStatus(v) {
+  v = String(v).toLowerCase();
 
   if (v.includes("ok")) return "ok";
   if (v.includes("uwaga")) return "warn";
-  if (v.includes("opóź") || v.includes("blad") || v.includes("error")) return "error";
+  if (v.includes("opóź") || v.includes("error") || v.includes("blad")) return "error";
 
   return "";
 }
 
 function buildTile(name, data) {
-  let statusText = "";
-  let statusClass = "";
 
-  if (data && data.length > 1 && data[1][0]) {
-    statusText = data[1][0];
-    statusClass = getStatus(statusText);
+  if (!data) {
+    return `
+      <div class="tile">
+        <div class="title">${name}</div>
+        <div class="status offline">OFFLINE</div>
+      </div>
+    `;
   }
 
-  let alarm = statusClass === "error" ? "alarm" : "";
+  let status = data?.[1]?.[0] || "BRAK";
+  let cls = getStatus(status);
+
+  let alarm = cls === "error" ? "alarm" : "";
 
   let html = `
     <div class="tile ${alarm}">
       <div class="title">${name}</div>
-      <div class="status ${statusClass}">${statusText || "BRAK DANYCH"}</div>
+      <div class="status ${cls}">${status}</div>
       <table>
   `;
 
-  if (data) {
-    data.slice(1, 6).forEach(row => {
-      html += "<tr>";
-      row.forEach(cell => {
-        html += `<td>${cell || ""}</td>`;
-      });
-      html += "</tr>";
+  data.slice(1, 6).forEach(row => {
+    html += "<tr>";
+    row.forEach(cell => {
+      html += `<td>${cell || ""}</td>`;
     });
-  }
+    html += "</tr>";
+  });
 
   html += "</table></div>";
 
   return html;
 }
 
-async function updateBoard() {
+async function update() {
   const grid = document.getElementById("grid");
-  grid.innerHTML = "";
 
   const results = await Promise.all(
-    lines.map(async line => {
-      const data = await fetchSheet(line.gid);
-      return buildTile(line.name, data);
+    lines.map(async l => {
+      const data = await safeFetch(l.gid);
+      return buildTile(l.name, data);
     })
   );
 
   grid.innerHTML = results.join("");
 }
 
-/* START */
-updateBoard();
-setInterval(updateBoard, 10000); // LIVE refresh co 10s
+/* CLOCK */
+function clock() {
+  const now = new Date();
+  document.getElementById("clock").innerText =
+    now.toLocaleTimeString();
+}
+
+setInterval(clock, 1000);
+clock();
+
+/* START SYSTEM */
+update();
+setInterval(update, 10000);
 
 </script>
 
