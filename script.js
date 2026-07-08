@@ -5,6 +5,7 @@
 const CHANGE_INTERVAL = 30000;      // zmiana arkusza co 30 s
 const REFRESH_INTERVAL = 900000;    // odświeżenie danych co 15 min
 
+
 // ===============================
 // ZMIENNE
 // ===============================
@@ -15,7 +16,14 @@ let currentSheet = 0;
 
 let lastUpdate = "";
 
-// elementy strony
+let changeTimer;
+
+let refreshTimer;
+
+
+// ===============================
+// ELEMENTY STRONY
+// ===============================
 
 const tableHead = document.querySelector("#productionTable thead");
 const tableBody = document.querySelector("#productionTable tbody");
@@ -25,6 +33,7 @@ const sheetCounter = document.getElementById("sheetCounter");
 const updateLabel = document.getElementById("lastUpdate");
 
 const progress = document.getElementById("progress");
+
 
 // ===============================
 // POBIERANIE DANYCH
@@ -38,12 +47,15 @@ async function loadData() {
 
         const json = await response.json();
 
+
         sheets = json.sheets;
 
         lastUpdate = json.updated;
 
+
         updateLabel.textContent =
             "Aktualizacja: " + lastUpdate;
+
 
         if (sheets.length > 0) {
 
@@ -51,13 +63,15 @@ async function loadData() {
 
             drawSheet(currentSheet);
 
+            startSheetRotation();
+
         }
 
     }
 
     catch (e) {
 
-        console.error(e);
+        console.error("Błąd pobierania danych:", e);
 
     }
 
@@ -70,11 +84,16 @@ async function loadData() {
 
 function drawSheet(index) {
 
+
     const sheet = sheets[index];
 
-    if (!sheet) return;
+
+    if (!sheet)
+        return;
+
 
     machineName.textContent = sheet.name;
+
 
     sheetCounter.textContent =
         "Arkusz " +
@@ -82,20 +101,27 @@ function drawSheet(index) {
         " / " +
         sheets.length;
 
+
     tableHead.innerHTML = "";
 
     tableBody.innerHTML = "";
 
+
     const rows = sheet.rows;
 
-    if (rows.length < 2)
+
+    if (!rows || rows.length < 2)
         return;
 
-    // pierwszy wiersz
+
+
+    // nagłówki - pierwszy wiersz
 
     const tr1 = document.createElement("tr");
 
+
     rows[0].forEach(value => {
+
 
         const th = document.createElement("th");
 
@@ -103,15 +129,21 @@ function drawSheet(index) {
 
         tr1.appendChild(th);
 
+
     });
+
 
     tableHead.appendChild(tr1);
 
-    // drugi wiersz
+
+
+    // nagłówki - drugi wiersz
 
     const tr2 = document.createElement("tr");
 
+
     rows[1].forEach(value => {
+
 
         const th = document.createElement("th");
 
@@ -119,17 +151,25 @@ function drawSheet(index) {
 
         tr2.appendChild(th);
 
+
     });
+
 
     tableHead.appendChild(tr2);
 
-    // pozostałe wiersze
+
+
+
+    // dane
 
     for (let i = 2; i < rows.length; i++) {
 
+
         const tr = document.createElement("tr");
 
+
         rows[i].forEach(value => {
+
 
             const td = document.createElement("td");
 
@@ -137,11 +177,114 @@ function drawSheet(index) {
 
             tr.appendChild(td);
 
+
         });
+
 
         tableBody.appendChild(tr);
 
+
     }
+
+}
+
+
+// ===============================
+// AUTOMATYCZNA ZMIANA ARKUSZY
+// ===============================
+
+function startSheetRotation() {
+
+
+    clearInterval(changeTimer);
+
+
+    changeTimer = setInterval(() => {
+
+
+        if (sheets.length <= 1)
+            return;
+
+
+
+        currentSheet++;
+
+
+        if (currentSheet >= sheets.length)
+            currentSheet = 0;
+
+
+
+        drawSheet(currentSheet);
+
+
+    }, CHANGE_INTERVAL);
+
+
+}
+
+
+
+// ===============================
+// PASEK POSTĘPU
+// ===============================
+
+function startProgress() {
+
+
+    let start = Date.now();
+
+
+    setInterval(() => {
+
+
+        let elapsed = Date.now() - start;
+
+
+        let percent =
+            (elapsed / CHANGE_INTERVAL) * 100;
+
+
+        if (percent >= 100) {
+
+            start = Date.now();
+
+            percent = 0;
+
+        }
+
+
+        if (progress) {
+
+            progress.style.width =
+                percent + "%";
+
+        }
+
+
+    }, 100);
+
+}
+
+
+// ===============================
+// AUTOMATYCZNE ODŚWIEŻANIE
+// ===============================
+
+function startRefreshTimer() {
+
+
+    clearInterval(refreshTimer);
+
+
+    refreshTimer = setInterval(() => {
+
+
+        loadData();
+
+
+    }, REFRESH_INTERVAL);
+
 
 }
 
@@ -151,3 +294,7 @@ function drawSheet(index) {
 // ===============================
 
 loadData();
+
+startProgress();
+
+startRefreshTimer();
