@@ -162,7 +162,9 @@ function drawSheet(index){
 
         const statusIndex =
             findColumn(headers,"Status");
-
+                console.log("Status index:", statusIndex);
+                console.log("Status value:", rows[i][statusIndex]);
+                console.log("Data value:", rows[i][dateIndex]);
 
         const dateIndex =
             findColumn(headers,"Data");
