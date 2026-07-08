@@ -1,0 +1,273 @@
+/* ===============================
+   RESET
+================================ */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    background:#ffffff;
+
+    font-family:Arial, Helvetica, sans-serif;
+
+}
+
+body{
+
+    display:flex;
+
+}
+
+
+/* ===============================
+   GŁÓWNY KONTENER
+================================ */
+
+#app{
+
+    display:flex;
+
+    flex-direction:column;
+
+    width:100vw;
+
+    height:100vh;
+
+}
+
+
+/* ===============================
+   GÓRNY PASEK
+================================ */
+
+#topBar{
+
+    height:78px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 28px;
+
+    border-bottom:2px solid #222;
+
+    background:white;
+
+    flex-shrink:0;
+
+}
+
+.title{
+
+    font-size:38px;
+
+    font-weight:bold;
+
+}
+
+.machine{
+
+    margin-top:6px;
+
+    font-size:24px;
+
+}
+
+#machineName{
+
+    font-weight:bold;
+
+}
+
+#rightInfo{
+
+    text-align:right;
+
+}
+
+#sheetCounter{
+
+    font-size:26px;
+
+    font-weight:bold;
+
+}
+
+#lastUpdate{
+
+    margin-top:8px;
+
+    font-size:18px;
+
+    color:#666;
+
+}
+
+
+/* ===============================
+   OBSZAR TABELI
+================================ */
+
+main{
+
+    flex:1;
+
+    overflow:hidden;
+
+    padding:0;
+
+    position:relative;
+
+}
+
+
+/* ===============================
+   TABELA
+================================ */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    table-layout:auto;
+
+    font-size:22px;
+
+    background:white;
+
+    transition:
+        opacity .35s ease,
+        transform .35s ease;
+
+}
+
+thead{
+
+    background:#ffffff;
+
+}
+
+thead tr:first-child{
+
+    font-size:30px;
+
+    font-weight:bold;
+
+}
+
+thead tr:nth-child(2){
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+th,
+td{
+
+    border:1px solid #333;
+
+    padding:7px 10px;
+
+    white-space:nowrap;
+
+}
+
+
+/* zebra */
+
+tbody tr:nth-child(odd){
+
+    background:#dcdcdc;
+
+}
+
+tbody tr:nth-child(even){
+
+    background:white;
+
+}
+
+
+/* wyśrodkowanie */
+
+th{
+
+    text-align:center;
+
+}
+
+td:nth-child(1),
+td:nth-child(2),
+td:nth-child(3),
+td:nth-child(4),
+td:nth-child(6),
+td:nth-child(7),
+td:nth-child(8),
+td:nth-child(9){
+
+    text-align:center;
+
+}
+
+
+/* ===============================
+   ANIMACJE
+================================ */
+
+.fadeOut{
+
+    opacity:0;
+
+    transform:translateX(-40px);
+
+}
+
+.fadeIn{
+
+    opacity:1;
+
+    transform:translateX(0px);
+
+}
+
+
+/* ===============================
+   PASEK POSTĘPU
+================================ */
+
+footer{
+
+    height:7px;
+
+    background:#dddddd;
+
+    flex-shrink:0;
+
+}
+
+#progress{
+
+    width:0%;
+
+    height:100%;
+
+    background:#2d7ff9;
+
+}
