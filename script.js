@@ -184,21 +184,14 @@ function drawSheet(index){
 
 
 
-        // ===============================
-        // PRODUCTION
-        // ===============================
+// ===============================
+// PRODUCTION
+// ===============================
 
-
-        if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
+if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
     console.log("PRODUCTION ZNALEZIONE", row);
     tr.classList.add("productionRow");
 }
-        ){
-
-            console.log("ZNALEZIONO PRODUCTION:", rows[i]);
-            tr.classList.add("productionRow");
-            console.log("PRODUCTION KLASA DODANA", rows[i]);
-        }
 
 
 
