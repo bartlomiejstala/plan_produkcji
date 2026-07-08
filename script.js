@@ -49,7 +49,15 @@ async function loadData() {
 
         const response = await fetch(API_URL);
 
-        const json = await response.json();
+
+const text = await response.text();
+
+
+console.log("ODPOWIEDŹ GOOGLE:");
+console.log(text);
+
+
+const json = JSON.parse(text);
 
         sheets = json.sheets;
 
