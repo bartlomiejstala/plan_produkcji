@@ -189,8 +189,7 @@ function drawSheet(index){
         // ===============================
 
 
-        if(
-            if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
+        if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
     console.log("PRODUCTION ZNALEZIONE", row);
     tr.classList.add("productionRow");
 }
