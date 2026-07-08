@@ -271,3 +271,31 @@ footer{
     background:#2d7ff9;
 
 }
+
+.titleLine {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+
+#progressBar {
+
+    width: 250px;
+    height: 8px;
+
+    background: #444;
+
+    overflow: hidden;
+
+}
+
+
+#progress {
+
+    height: 100%;
+    width: 0%;
+
+    background: #00aaff;
+
+}
