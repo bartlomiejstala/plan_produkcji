@@ -244,37 +244,28 @@ thead th {
 
 .smallColumn {
 
-    width:70px;
+    width:45px;
 
 }
 
-
-
-/* numer zlecenia */
 
 .orderColumn {
 
-    width:95px;
+    width:65px;
 
 }
 
-
-
-/* ilości */
 
 .qtyColumn {
 
-    width:75px;
+    width:40px;
 
 }
 
 
-
-/* data */
-
 .dateColumn {
 
-    width:110px;
+    width:75px;
 
 }
 
