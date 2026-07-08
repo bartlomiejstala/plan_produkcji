@@ -14,19 +14,39 @@
 
 </head>
 
+
 <body>
 
 <div id="app">
+
 
     <!-- Pasek górny -->
 
     <header id="topBar">
 
+
         <div id="leftInfo">
 
-            <div class="title">
-                Plan Produkcji
+
+            <div class="titleLine">
+
+                <div class="title">
+                    Plan Produkcji
+                </div>
+
+
+                <!-- pasek postępu -->
+
+                <div id="progressBar">
+
+                    <div id="progress"></div>
+
+                </div>
+
+
             </div>
+
+
 
             <div class="machine">
 
@@ -38,9 +58,13 @@
 
             </div>
 
+
         </div>
 
+
+
         <div id="rightInfo">
+
 
             <div id="sheetCounter">
 
@@ -48,15 +72,19 @@
 
             </div>
 
+
             <div id="lastUpdate">
 
                 Aktualizacja...
 
             </div>
 
+
         </div>
 
+
     </header>
+
 
 
 
@@ -64,35 +92,29 @@
 
     <main>
 
+
         <table id="productionTable">
+
 
             <thead>
 
             </thead>
 
+
             <tbody>
 
             </tbody>
 
+
         </table>
+
 
     </main>
 
 
 
-    <!-- pasek postępu -->
-
-    <footer>
-
-        <div id="progressBar">
-
-            <div id="progress"></div>
-
-        </div>
-
-    </footer>
-
 </div>
+
 
 
 
@@ -102,7 +124,10 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyhs5aE9gBquRV4DHLK4WqS
 
 </script>
 
+
 <script src="script.js"></script>
 
+
 </body>
+
 </html>
