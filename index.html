@@ -1,129 +1,108 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
-<meta charset="UTF-8">
-<title>Plan produkcji</title>
 
-<!-- 🔥 FAVICON (LOGO W ZAKŁADCE) -->
-<link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-}
+    <title>Plan Produkcji</title>
 
-/* kontener */
-#container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+    <link rel="icon" href="logo.png">
 
-/* iframe (Google Sheets VIEW) */
-iframe {
-  position: absolute;
+    <link rel="stylesheet" href="style.css">
 
-  /* 🔥 crop UI Google (ukrywa nagłówki A/B/C i 1/2/3) */
-  top: -25px;
-  left: -45px;
-  width: calc(100% + 130px);
-  height: calc(100% + 80px);
-
-  border: none;
-  background: #000;
-
-  opacity: 0;
-  transition: opacity 1.2s ease-in-out;
-}
-
-/* aktywny iframe */
-iframe.active {
-  opacity: 1;
-  z-index: 2;
-}
-
-/* nieaktywny iframe */
-iframe.inactive {
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-</style>
 </head>
 
 <body>
 
-<div id="container">
-  <iframe id="frameA" class="active"></iframe>
-  <iframe id="frameB" class="inactive"></iframe>
+<div id="app">
+
+    <!-- Pasek górny -->
+
+    <header id="topBar">
+
+        <div id="leftInfo">
+
+            <div class="title">
+                Plan Produkcji
+            </div>
+
+            <div class="machine">
+
+                Stanowisko:
+
+                <span id="machineName">
+                    ...
+                </span>
+
+            </div>
+
+        </div>
+
+        <div id="rightInfo">
+
+            <div id="sheetCounter">
+
+                Arkusz 1 / 12
+
+            </div>
+
+            <div id="lastUpdate">
+
+                Aktualizacja...
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- tabela -->
+
+    <main>
+
+        <table id="productionTable">
+
+            <thead>
+
+            </thead>
+
+            <tbody>
+
+            </tbody>
+
+        </table>
+
+    </main>
+
+
+
+    <!-- pasek postępu -->
+
+    <footer>
+
+        <div id="progressBar">
+
+            <div id="progress"></div>
+
+        </div>
+
+    </footer>
+
 </div>
+
+
 
 <script>
 
-const baseUrl =
-  "https://docs.google.com/spreadsheets/d/1urmkGGMZUZD5ZUacIztgyn8LIggKFQIA216BX1gGh3k/edit?rm=minimal";
-
-const gids = [
-  "1302678005", // 2
-  "591301520",  // 3
-  "754950235",  // 4
-  "1526133636", // 5
-  "1371427007", // 6
-  "2052740737", // 7
-  "235755546",  // 8
-  "1578466874", // 9
-  "1844684744", // 10
-  "627551025",  // 11
-  "1597822855", // 12
-  "1089363128"  // 13
-];
-
-let index = 0;
-
-const frameA = document.getElementById("frameA");
-const frameB = document.getElementById("frameB");
-
-let current = frameA;
-let next = frameB;
-
-/* 🔄 przełączanie widoków */
-function switchView() {
-
-  const gid = gids[index];
-
-  next.classList.remove("active");
-  next.classList.add("inactive");
-
-  next.src = `${baseUrl}#gid=${gid}`;
-
-  next.onload = () => {
-
-    // fade in next
-    next.classList.add("active");
-    next.classList.remove("inactive");
-
-    // fade out current
-    current.classList.remove("active");
-    current.classList.add("inactive");
-
-    // swap
-    [current, next] = [next, current];
-  };
-
-  index = (index + 1) % gids.length;
-}
-
-/* start */
-switchView();
-
-/* zmiana co 30 sekund */
-setInterval(switchView, 30000);
+const API_URL = "https://script.google.com/macros/s/AKfycbyhs5aE9gBquRV4DHLK4WqSQcWdZRZBa38jwJYgqJ3gUPljKTvoFW6YEFgftge5wv9mhg/exec";
 
 </script>
+
+<script src="script.js"></script>
 
 </body>
 </html>
