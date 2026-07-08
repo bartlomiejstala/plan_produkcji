@@ -2,9 +2,8 @@
 // USTAWIENIA
 // ===============================
 
-const CHANGE_INTERVAL = 30000;      // zmiana arkusza co 30 s
-const REFRESH_INTERVAL = 900000;    // odświeżenie danych co 15 min
-
+const CHANGE_INTERVAL = 30000;
+const REFRESH_INTERVAL = 900000;
 
 
 // ===============================
@@ -14,8 +13,6 @@ const REFRESH_INTERVAL = 900000;    // odświeżenie danych co 15 min
 let sheets = [];
 
 let currentSheet = 0;
-
-let lastUpdate = "";
 
 let changeTimer;
 
@@ -28,7 +25,7 @@ let progressStart = Date.now();
 
 
 // ===============================
-// ELEMENTY STRONY
+// ELEMENTY
 // ===============================
 
 const tableHead = document.querySelector("#productionTable thead");
@@ -57,15 +54,11 @@ async function loadData() {
         const json = await response.json();
 
 
-
         sheets = json.sheets;
-
-        lastUpdate = json.updated;
-
 
 
         updateLabel.textContent =
-            "Aktualizacja: " + lastUpdate;
+            "Aktualizacja: " + json.updated;
 
 
 
@@ -74,9 +67,7 @@ async function loadData() {
 
             currentSheet = 0;
 
-
             drawSheet(currentSheet);
-
 
             startSheetRotation();
 
@@ -87,14 +78,9 @@ async function loadData() {
     }
 
 
-    catch (e) {
+    catch(e){
 
-
-        console.error(
-            "Błąd pobierania danych:",
-            e
-        );
-
+        console.error(e);
 
     }
 
@@ -108,13 +94,13 @@ async function loadData() {
 // RYSOWANIE ARKUSZA
 // ===============================
 
-function drawSheet(index) {
+function drawSheet(index){
 
 
     const sheet = sheets[index];
 
 
-    if (!sheet)
+    if(!sheet)
         return;
 
 
@@ -132,9 +118,8 @@ function drawSheet(index) {
 
 
 
-    tableHead.innerHTML = "";
-
-    tableBody.innerHTML = "";
+    tableHead.innerHTML="";
+    tableBody.innerHTML="";
 
 
 
@@ -142,88 +127,59 @@ function drawSheet(index) {
 
 
 
-    if (!rows || rows.length < 2)
+    if(!rows || rows.length < 2)
         return;
 
 
 
-
-    // pierwszy nagłówek
-
-
-    const tr1 = document.createElement("tr");
+    const headers = rows[0];
 
 
 
-    rows[0].forEach(value => {
+    // ===============================
+    // NAGŁÓWKI
+    // ===============================
 
 
-        const th = document.createElement("th");
-
-
-        th.textContent = value;
-
-
-        tr1.appendChild(th);
-
-
-    });
+    createHeaderRow(headers);
 
 
 
-    tableHead.appendChild(tr1);
+    createHeaderRow(rows[1]);
 
 
 
-
-    // drugi nagłówek
-
-
-    const tr2 = document.createElement("tr");
+    // ===============================
+    // DANE
+    // ===============================
 
 
-
-    rows[1].forEach(value => {
-
-
-        const th = document.createElement("th");
+    for(let i=2;i<rows.length;i++){
 
 
-        th.textContent = value;
+        const tr=document.createElement("tr");
 
 
-        tr2.appendChild(th);
+        const statusIndex =
+            findColumn(headers,"Status");
 
 
-    });
+        const dateIndex =
+            findColumn(headers,"Data");
 
 
 
-    tableHead.appendChild(tr2);
+        rows[i].forEach((value,index)=>{
 
 
+            const td=document.createElement("td");
 
 
-
-    // dane
-
-
-    for (let i = 2; i < rows.length; i++) {
+            td.textContent=value;
 
 
+            applyColumnWidth(td,headers[index]);
 
-        const tr = document.createElement("tr");
-
-
-
-        rows[i].forEach(value => {
-
-
-
-            const td = document.createElement("td");
-
-
-            td.textContent = value;
 
 
             tr.appendChild(td);
@@ -231,6 +187,37 @@ function drawSheet(index) {
 
 
         });
+
+
+
+        // Production
+
+        if(
+            statusIndex >=0 &&
+            rows[i][statusIndex] &&
+            rows[i][statusIndex]
+                .toString()
+                .toLowerCase()
+                === "production"
+        ){
+
+            tr.classList.add("productionRow");
+
+        }
+
+
+
+
+        // Stara data
+
+        if(
+            dateIndex >=0 &&
+            isOldDate(rows[i][dateIndex])
+        ){
+
+            tr.classList.add("oldDate");
+
+        }
 
 
 
@@ -255,43 +242,116 @@ function drawSheet(index) {
 
 
 // ===============================
-// AUTOMATYCZNA ZMIANA ARKUSZY
+// NAGŁÓWKI
 // ===============================
 
-function startSheetRotation() {
+function createHeaderRow(values){
 
 
-    clearInterval(changeTimer);
+    const tr=document.createElement("tr");
+
+
+    values.forEach(value=>{
+
+
+        const th=document.createElement("th");
+
+
+        th.textContent=value;
+
+
+        applyColumnWidth(th,value);
+
+
+        tr.appendChild(th);
+
+
+    });
+
+
+    tableHead.appendChild(tr);
+
+
+}
 
 
 
-    changeTimer = setInterval(() => {
 
 
 
-        if (sheets.length <= 1)
-            return;
+// ===============================
+// SZUKANIE KOLUMNY
+// ===============================
+
+function findColumn(headers,name){
+
+
+    return headers.findIndex(h=>
+
+        h.toString()
+        .trim()
+        .toLowerCase()
+        ===
+        name.toLowerCase()
+
+    );
+
+
+}
 
 
 
 
-        currentSheet++;
+
+// ===============================
+// SZEROKOŚCI KOLUMN
+// ===============================
+
+function applyColumnWidth(cell,name){
+
+
+    if(!name)
+        return;
+
+
+    const n =
+        name
+        .toString()
+        .toLowerCase()
+        .trim();
 
 
 
-        if (currentSheet >= sheets.length)
+    if(n==="status"){
 
-            currentSheet = 0;
+        cell.classList.add("smallColumn");
 
-
-
-
-        drawSheet(currentSheet);
+    }
 
 
+    else if(n==="nr zlec."){
 
-    }, CHANGE_INTERVAL);
+        cell.classList.add("orderColumn");
 
+    }
+
+
+    else if(
+        n==="ilość" ||
+        n==="ok" ||
+        n==="scrap"
+    ){
+
+        cell.classList.add("qtyColumn");
+
+    }
+
+
+    else if(n==="data"){
+
+        cell.classList.add("dateColumn");
+
+    }
 
 
 }
@@ -303,91 +363,142 @@ function startSheetRotation() {
 
 
 // ===============================
-// DOPASOWANIE CZCIONKI
+// SPRAWDZENIE DATY
 // ===============================
 
-function adjustTableFont() {
+function isOldDate(value){
+
+
+    if(!value)
+        return false;
 
 
 
-    const firstRow =
-        document.querySelector(
-            "#productionTable thead tr"
-        );
+    const date =
+        new Date(value);
 
 
 
-    if (!firstRow)
+    if(isNaN(date))
+        return false;
+
+
+
+    const today =
+        new Date();
+
+
+    today.setHours(0,0,0,0);
+
+
+
+    date.setHours(0,0,0,0);
+
+
+
+    return date < today;
+
+
+
+}
+
+
+
+
+
+
+// ===============================
+// FONT
+// ===============================
+
+function adjustTableFont(){
+
+
+    const columns =
+        tableHead.rows[0]?.cells.length;
+
+
+
+    if(!columns)
         return;
 
 
 
-    const columns =
-        firstRow.children.length;
+    let size;
 
 
 
-    let fontSize;
+    if(columns <=8)
 
+        size="2vw";
 
+    else if(columns<=14)
 
-    if (columns <= 8) {
+        size="1.5vw";
 
+    else if(columns<=20)
 
-        fontSize = "2vw";
+        size="1.2vw";
 
+    else
 
-    }
-
-    else if (columns <= 14) {
-
-
-        fontSize = "1.6vw";
-
-
-    }
-
-    else if (columns <= 20) {
-
-
-        fontSize = "1.25vw";
-
-
-    }
-
-    else if (columns <= 30) {
-
-
-        fontSize = "1vw";
-
-
-    }
-
-    else {
-
-
-        fontSize = "0.8vw";
-
-
-    }
-
+        size="0.9vw";
 
 
 
 
     document
-        .querySelectorAll(
-            "#productionTable th, #productionTable td"
-        )
-        .forEach(cell => {
+    .querySelectorAll(
+        "#productionTable th,#productionTable td"
+    )
+    .forEach(c=>{
+
+        c.style.fontSize=size;
+
+    });
 
 
-            cell.style.fontSize =
-                fontSize;
+}
 
 
-        });
 
+
+
+
+// ===============================
+// ZMIANA ARKUSZY
+// ===============================
+
+function startSheetRotation(){
+
+
+    clearInterval(changeTimer);
+
+
+
+    changeTimer=setInterval(()=>{
+
+
+        if(sheets.length<=1)
+            return;
+
+
+
+        currentSheet++;
+
+
+
+        if(currentSheet>=sheets.length)
+
+            currentSheet=0;
+
+
+
+        drawSheet(currentSheet);
+
+
+
+    },CHANGE_INTERVAL);
 
 
 }
@@ -401,16 +512,14 @@ function adjustTableFont() {
 // PASEK POSTĘPU
 // ===============================
 
-function resetProgress() {
+function resetProgress(){
+
+    progressStart=Date.now();
 
 
-    progressStart = Date.now();
+    if(progress)
 
-
-
-    if (progress)
-
-        progress.style.width = "0%";
+        progress.style.width="0%";
 
 
 }
@@ -418,46 +527,39 @@ function resetProgress() {
 
 
 
-
-function startProgress() {
-
+function startProgress(){
 
 
     clearInterval(progressTimer);
 
 
 
-    progressTimer = setInterval(() => {
+    progressTimer=setInterval(()=>{
 
 
-
-        if (!progress)
+        if(!progress)
             return;
 
 
 
-        let elapsed =
-            Date.now() - progressStart;
-
-
-
         let percent =
-            (elapsed / CHANGE_INTERVAL) * 100;
+            ((Date.now()-progressStart)
+            /CHANGE_INTERVAL)*100;
 
 
 
-        if (percent > 100)
+        if(percent>100)
 
-            percent = 100;
+            percent=100;
 
 
 
         progress.style.width =
-            percent + "%";
+            percent+"%";
 
 
 
-    }, 100);
+    },100);
 
 
 
@@ -467,33 +569,28 @@ function startProgress() {
 
 
 
-
 // ===============================
-// ODŚWIEŻANIE DANYCH
+// ODŚWIEŻANIE
 // ===============================
 
-function startRefreshTimer() {
+function startRefreshTimer(){
 
 
     clearInterval(refreshTimer);
 
 
 
-    refreshTimer = setInterval(() => {
+    refreshTimer=setInterval(()=>{
 
 
         loadData();
 
 
-
-    }, REFRESH_INTERVAL);
+    },REFRESH_INTERVAL);
 
 
 
 }
-
-
-
 
 
 
