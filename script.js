@@ -155,7 +155,9 @@ function drawSheet(index){
 
 
         const tr=document.createElement("tr");
-
+            console.log("WIERSZ:", row);
+            console.log("STATUS:", row[statusIndex]);
+            console.log("DATA:", row[dateIndex]);
 
 
         rows[i].forEach((value,index)=>{
@@ -188,13 +190,10 @@ function drawSheet(index){
 
 
         if(
-            statusIndex >= 0 &&
-            rows[i][statusIndex] &&
-            rows[i][statusIndex]
-                .toString()
-                .trim()
-                .toLowerCase()
-                .includes("production")
+            if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
+    console.log("PRODUCTION ZNALEZIONE", row);
+    tr.classList.add("productionRow");
+}
         ){
 
             console.log("ZNALEZIONO PRODUCTION:", rows[i]);
