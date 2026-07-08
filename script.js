@@ -25,7 +25,7 @@ let progressStart = Date.now();
 
 
 // ===============================
-// ELEMENTY 
+// ELEMENTY
 // ===============================
 
 const tableHead = document.querySelector("#productionTable thead");
@@ -45,14 +45,11 @@ const progress = document.getElementById("progress");
 
 async function loadData() {
 
-
     try {
-
 
         const response = await fetch(API_URL);
 
         const json = await response.json();
-
 
         sheets = json.sheets;
 
@@ -64,26 +61,21 @@ async function loadData() {
 
         if (sheets.length > 0) {
 
-
             currentSheet = 0;
 
             drawSheet(currentSheet);
 
             startSheetRotation();
 
-
         }
 
 
     }
-
-
     catch(e){
 
         console.error(e);
 
     }
-
 
 }
 
@@ -136,38 +128,25 @@ function drawSheet(index){
 
 
 
-    // ===============================
-    // NAGŁÓWKI
-    // ===============================
-
-
     createHeaderRow(headers);
-
-
 
     createHeaderRow(rows[1]);
 
 
 
-    // ===============================
-    // DANE
-    // ===============================
+    const statusIndex =
+        findColumn(headers,"Status");
+
+
+    const dateIndex =
+        findColumn(headers,"Data");
+
 
 
     for(let i=2;i<rows.length;i++){
 
 
         const tr=document.createElement("tr");
-
-
-        const statusIndex =
-            findColumn(headers,"Status");
-                console.log("Status index:", statusIndex);
-                console.log("Status value:", rows[i][statusIndex]);
-                console.log("Data value:", rows[i][dateIndex]);
-
-        const dateIndex =
-            findColumn(headers,"Data");
 
 
 
@@ -180,8 +159,10 @@ function drawSheet(index){
             td.textContent=value;
 
 
-            applyColumnWidth(td,headers[index]);
-
+            applyColumnWidth(
+                td,
+                headers[index]
+            );
 
 
             tr.appendChild(td);
@@ -192,17 +173,21 @@ function drawSheet(index){
 
 
 
-        // Production
+
+        // ===============================
+        // PRODUCTION
+        // ===============================
+
 
         if(
-    statusIndex >=0 &&
-    rows[i][statusIndex] &&
-    rows[i][statusIndex]
-        .toString()
-        .trim()
-        .toLowerCase()
-        .includes("production")
-    ){
+            statusIndex >= 0 &&
+            rows[i][statusIndex] &&
+            rows[i][statusIndex]
+                .toString()
+                .trim()
+                .toLowerCase()
+                .includes("production")
+        ){
 
             tr.classList.add("productionRow");
 
@@ -211,42 +196,24 @@ function drawSheet(index){
 
 
 
-        // Stara data
 
-        function isOldDate(value){
-
-    if(!value)
-        return false;
+        // ===============================
+        // STARA DATA
+        // ===============================
 
 
-    const text = value.toString().trim();
+        if(
+            dateIndex >= 0 &&
+            isOldDate(rows[i][dateIndex])
+        ){
 
+            tr.classList.add("oldDate");
 
-    let date = new Date(text);
-
-
-    if(isNaN(date)){
-
-        return false;
-
-    }
-
-
-    const today = new Date();
-
-    today.setHours(0,0,0,0);
-
-    date.setHours(0,0,0,0);
-
-
-    return date < today;
-
-}
+        }
 
 
 
         tableBody.appendChild(tr);
-
 
 
     }
@@ -310,7 +277,7 @@ function createHeaderRow(values){
 function findColumn(headers,name){
 
 
-    return headers.findIndex(h=>
+    return headers.findIndex(h =>
 
         h.toString()
         .trim()
@@ -322,6 +289,7 @@ function findColumn(headers,name){
 
 
 }
+
 
 
 
@@ -385,7 +353,6 @@ function applyColumnWidth(cell,name){
 
 
 
-
 // ===============================
 // SPRAWDZENIE DATY
 // ===============================
@@ -398,58 +365,17 @@ function isOldDate(value){
 
 
 
-    let date;
+    const text =
+        value.toString().trim();
 
 
 
-    // format yyyy-mm-dd
-
-    if(value.toString().includes("-")){
-
-
-        date = new Date(value);
-
-
-    }
-
-
-    // format dd.mm.yyyy
-
-    else if(value.toString().includes(".")){
-
-
-        const p =
-            value.toString().split(".");
-
-
-        if(p.length===3){
-
-
-            date =
-                new Date(
-                    p[2],
-                    p[1]-1,
-                    p[0]
-                );
-
-
-        }
-
-
-    }
+    const date =
+        new Date(text);
 
 
 
-    else {
-
-        date = new Date(value);
-
-    }
-
-
-
-    if(!date || isNaN(date))
-
+    if(isNaN(date))
         return false;
 
 
@@ -588,7 +514,6 @@ function resetProgress(){
     if(progress)
 
         progress.style.width="0%";
-
 
 }
 
