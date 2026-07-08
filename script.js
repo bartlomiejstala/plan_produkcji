@@ -25,7 +25,7 @@ let progressStart = Date.now();
 
 
 // ===============================
-// ELEMENTY
+// ELEMENTY 
 // ===============================
 
 const tableHead = document.querySelector("#productionTable thead");
