@@ -304,11 +304,11 @@ tbody tr:nth-child(even) {
 /* Production */
 
 
-.productionRow {
+.productionRow td {
 
-    text-decoration:underline;
+    text-decoration: underline;
 
-    font-weight:bold;
+    font-weight: bold;
 
 }
 
@@ -317,11 +317,11 @@ tbody tr:nth-child(even) {
 /* stare daty */
 
 
-.oldDate {
+.oldDate td {
 
-    color:red;
+    color: red !important;
 
-    font-weight:bold;
+    font-weight: bold;
 
 }
 
