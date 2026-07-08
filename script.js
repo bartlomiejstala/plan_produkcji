@@ -199,7 +199,7 @@ function drawSheet(index){
 
             console.log("ZNALEZIONO PRODUCTION:", rows[i]);
             tr.classList.add("productionRow");
-
+            console.log("PRODUCTION KLASA DODANA", rows[i]);
         }
 
 
@@ -218,7 +218,7 @@ function drawSheet(index){
 
             console.log("STARA DATA:", rows[i][dateIndex], rows[i]);
             tr.classList.add("oldDate");
-
+            onsole.log("STARA DATA KLASA DODANA", rows[i][dateIndex]);
         }
 
 
@@ -286,17 +286,17 @@ function createHeaderRow(values){
 
 function findColumn(headers,name){
 
-
     return headers.findIndex(h =>
 
         h.toString()
         .trim()
         .toLowerCase()
+        .replace(/\s+/g,"")
         ===
         name.toLowerCase()
+        .replace(/\s+/g,"")
 
     );
-
 
 }
 
