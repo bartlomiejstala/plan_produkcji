@@ -6,6 +6,7 @@ const CHANGE_INTERVAL = 30000;      // zmiana arkusza co 30 s
 const REFRESH_INTERVAL = 900000;    // odświeżenie danych co 15 min
 
 
+
 // ===============================
 // ZMIENNE
 // ===============================
@@ -19,6 +20,11 @@ let lastUpdate = "";
 let changeTimer;
 
 let refreshTimer;
+
+let progressTimer;
+
+let progressStart = Date.now();
+
 
 
 // ===============================
@@ -35,17 +41,21 @@ const updateLabel = document.getElementById("lastUpdate");
 const progress = document.getElementById("progress");
 
 
+
 // ===============================
 // POBIERANIE DANYCH
 // ===============================
 
 async function loadData() {
 
+
     try {
+
 
         const response = await fetch(API_URL);
 
         const json = await response.json();
+
 
 
         sheets = json.sheets;
@@ -53,29 +63,45 @@ async function loadData() {
         lastUpdate = json.updated;
 
 
+
         updateLabel.textContent =
             "Aktualizacja: " + lastUpdate;
 
 
+
         if (sheets.length > 0) {
+
 
             currentSheet = 0;
 
+
             drawSheet(currentSheet);
+
 
             startSheetRotation();
 
+
         }
 
+
     }
+
 
     catch (e) {
 
-        console.error("Błąd pobierania danych:", e);
+
+        console.error(
+            "Błąd pobierania danych:",
+            e
+        );
+
 
     }
 
+
 }
+
+
 
 
 // ===============================
@@ -92,7 +118,10 @@ function drawSheet(index) {
         return;
 
 
-    machineName.textContent = sheet.name;
+
+    machineName.textContent =
+        sheet.name;
+
 
 
     sheetCounter.textContent =
@@ -102,12 +131,15 @@ function drawSheet(index) {
         sheets.length;
 
 
+
     tableHead.innerHTML = "";
 
     tableBody.innerHTML = "";
 
 
+
     const rows = sheet.rows;
+
 
 
     if (!rows || rows.length < 2)
@@ -115,9 +147,12 @@ function drawSheet(index) {
 
 
 
-    // nagłówki - pierwszy wiersz
+
+    // pierwszy nagłówek
+
 
     const tr1 = document.createElement("tr");
+
 
 
     rows[0].forEach(value => {
@@ -125,7 +160,9 @@ function drawSheet(index) {
 
         const th = document.createElement("th");
 
+
         th.textContent = value;
+
 
         tr1.appendChild(th);
 
@@ -133,13 +170,17 @@ function drawSheet(index) {
     });
 
 
+
     tableHead.appendChild(tr1);
 
 
 
-    // nagłówki - drugi wiersz
+
+    // drugi nagłówek
+
 
     const tr2 = document.createElement("tr");
+
 
 
     rows[1].forEach(value => {
@@ -147,7 +188,9 @@ function drawSheet(index) {
 
         const th = document.createElement("th");
 
+
         th.textContent = value;
+
 
         tr2.appendChild(th);
 
@@ -155,38 +198,60 @@ function drawSheet(index) {
     });
 
 
+
     tableHead.appendChild(tr2);
+
 
 
 
 
     // dane
 
+
     for (let i = 2; i < rows.length; i++) {
+
 
 
         const tr = document.createElement("tr");
 
 
+
         rows[i].forEach(value => {
+
 
 
             const td = document.createElement("td");
 
+
             td.textContent = value;
 
+
             tr.appendChild(td);
+
 
 
         });
 
 
+
         tableBody.appendChild(tr);
+
 
 
     }
 
+
+
+    adjustTableFont();
+
+    resetProgress();
+
+
 }
+
+
+
+
 
 
 // ===============================
@@ -199,7 +264,9 @@ function startSheetRotation() {
     clearInterval(changeTimer);
 
 
+
     changeTimer = setInterval(() => {
+
 
 
         if (sheets.length <= 1)
@@ -207,21 +274,126 @@ function startSheetRotation() {
 
 
 
+
         currentSheet++;
 
 
+
         if (currentSheet >= sheets.length)
+
             currentSheet = 0;
+
 
 
 
         drawSheet(currentSheet);
 
 
+
     }, CHANGE_INTERVAL);
 
 
+
 }
+
+
+
+
+
+
+
+// ===============================
+// DOPASOWANIE CZCIONKI
+// ===============================
+
+function adjustTableFont() {
+
+
+
+    const firstRow =
+        document.querySelector(
+            "#productionTable thead tr"
+        );
+
+
+
+    if (!firstRow)
+        return;
+
+
+
+    const columns =
+        firstRow.children.length;
+
+
+
+    let fontSize;
+
+
+
+    if (columns <= 8) {
+
+
+        fontSize = "2vw";
+
+
+    }
+
+    else if (columns <= 14) {
+
+
+        fontSize = "1.6vw";
+
+
+    }
+
+    else if (columns <= 20) {
+
+
+        fontSize = "1.25vw";
+
+
+    }
+
+    else if (columns <= 30) {
+
+
+        fontSize = "1vw";
+
+
+    }
+
+    else {
+
+
+        fontSize = "0.8vw";
+
+
+    }
+
+
+
+
+
+    document
+        .querySelectorAll(
+            "#productionTable th, #productionTable td"
+        )
+        .forEach(cell => {
+
+
+            cell.style.fontSize =
+                fontSize;
+
+
+        });
+
+
+
+}
+
+
+
 
 
 
@@ -229,46 +401,75 @@ function startSheetRotation() {
 // PASEK POSTĘPU
 // ===============================
 
+function resetProgress() {
+
+
+    progressStart = Date.now();
+
+
+
+    if (progress)
+
+        progress.style.width = "0%";
+
+
+}
+
+
+
+
+
 function startProgress() {
 
 
-    let start = Date.now();
+
+    clearInterval(progressTimer);
 
 
-    setInterval(() => {
+
+    progressTimer = setInterval(() => {
 
 
-        let elapsed = Date.now() - start;
+
+        if (!progress)
+            return;
+
+
+
+        let elapsed =
+            Date.now() - progressStart;
+
 
 
         let percent =
             (elapsed / CHANGE_INTERVAL) * 100;
 
 
-        if (percent >= 100) {
 
-            start = Date.now();
+        if (percent > 100)
 
-            percent = 0;
-
-        }
+            percent = 100;
 
 
-        if (progress) {
 
-            progress.style.width =
-                percent + "%";
+        progress.style.width =
+            percent + "%";
 
-        }
 
 
     }, 100);
 
+
+
 }
 
 
+
+
+
+
 // ===============================
-// AUTOMATYCZNE ODŚWIEŻANIE
+// ODŚWIEŻANIE DANYCH
 // ===============================
 
 function startRefreshTimer() {
@@ -277,16 +478,24 @@ function startRefreshTimer() {
     clearInterval(refreshTimer);
 
 
+
     refreshTimer = setInterval(() => {
 
 
         loadData();
 
 
+
     }, REFRESH_INTERVAL);
 
 
+
 }
+
+
+
+
+
 
 
 // ===============================
