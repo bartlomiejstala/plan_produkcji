@@ -193,13 +193,14 @@ function drawSheet(index){
         // Production
 
         if(
-            statusIndex >=0 &&
-            rows[i][statusIndex] &&
-            rows[i][statusIndex]
-                .toString()
-                .toLowerCase()
-                .includes("production")
-        ){
+    statusIndex >=0 &&
+    rows[i][statusIndex] &&
+    rows[i][statusIndex]
+        .toString()
+        .trim()
+        .toLowerCase()
+        .includes("production")
+    ){
 
             tr.classList.add("productionRow");
 
@@ -210,14 +211,35 @@ function drawSheet(index){
 
         // Stara data
 
-        if(
-            dateIndex >=0 &&
-            isOldDate(rows[i][dateIndex])
-        ){
+        function isOldDate(value){
 
-            tr.classList.add("oldDate");
+    if(!value)
+        return false;
 
-        }
+
+    const text = value.toString().trim();
+
+
+    let date = new Date(text);
+
+
+    if(isNaN(date)){
+
+        return false;
+
+    }
+
+
+    const today = new Date();
+
+    today.setHours(0,0,0,0);
+
+    date.setHours(0,0,0,0);
+
+
+    return date < today;
+
+}
 
 
 
