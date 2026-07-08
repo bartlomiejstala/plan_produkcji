@@ -2,300 +2,361 @@
    RESET
 ================================ */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
 
 html,
-body{
+body {
 
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
 
-    overflow:hidden;
+    overflow: hidden;
 
-    background:#ffffff;
+    background: #ffffff;
 
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+
+
+body {
+
+    display: flex;
 
 }
 
-body{
-
-    display:flex;
-
-}
 
 
 /* ===============================
    GŁÓWNY KONTENER
 ================================ */
 
-#app{
 
-    display:flex;
+#app {
 
-    flex-direction:column;
+    display: flex;
 
-    width:100vw;
+    flex-direction: column;
 
-    height:100vh;
+    width: 100vw;
+
+    height: 100vh;
 
 }
+
 
 
 /* ===============================
    GÓRNY PASEK
 ================================ */
 
-#topBar{
 
-    height:78px;
+#topBar {
 
-    display:flex;
+    height: 90px;
 
-    justify-content:space-between;
+    display: flex;
 
-    align-items:center;
+    justify-content: space-between;
 
-    padding:12px 28px;
+    align-items: center;
 
-    border-bottom:2px solid #222;
+    padding: 10px 28px;
 
-    background:white;
+    border-bottom: 2px solid #222;
 
-    flex-shrink:0;
+    background: white;
 
-}
-
-.title{
-
-    font-size:38px;
-
-    font-weight:bold;
-
-}
-
-.machine{
-
-    margin-top:6px;
-
-    font-size:24px;
-
-}
-
-#machineName{
-
-    font-weight:bold;
-
-}
-
-#rightInfo{
-
-    text-align:right;
-
-}
-
-#sheetCounter{
-
-    font-size:26px;
-
-    font-weight:bold;
-
-}
-
-#lastUpdate{
-
-    margin-top:8px;
-
-    font-size:18px;
-
-    color:#666;
+    flex-shrink: 0;
 
 }
 
 
-/* ===============================
-   OBSZAR TABELI
-================================ */
 
-main{
+.titleLine {
 
-    flex:1;
+    display: flex;
 
-    overflow:hidden;
+    align-items: center;
 
-    padding:0;
-
-    position:relative;
+    gap: 25px;
 
 }
 
 
-/* ===============================
-   TABELA
-================================ */
 
-table{
+.title {
 
-    width:100%;
+    font-size: 38px;
 
-    border-collapse:collapse;
-
-    table-layout:auto;
-
-    font-size:22px;
-
-    background:white;
-
-    transition:
-        opacity .35s ease,
-        transform .35s ease;
-
-}
-
-thead{
-
-    background:#ffffff;
-
-}
-
-thead tr:first-child{
-
-    font-size:30px;
-
-    font-weight:bold;
-
-}
-
-thead tr:nth-child(2){
-
-    font-size:22px;
-
-    font-weight:bold;
-
-}
-
-th,
-td{
-
-    border:1px solid #333;
-
-    padding:7px 10px;
-
-    white-space:nowrap;
+    font-weight: bold;
 
 }
 
 
-/* zebra */
 
-tbody tr:nth-child(odd){
+.machine {
 
-    background:#dcdcdc;
+    margin-top: 6px;
 
-}
-
-tbody tr:nth-child(even){
-
-    background:white;
+    font-size: 24px;
 
 }
 
 
-/* wyśrodkowanie */
 
-th{
+#machineName {
 
-    text-align:center;
-
-}
-
-td:nth-child(1),
-td:nth-child(2),
-td:nth-child(3),
-td:nth-child(4),
-td:nth-child(6),
-td:nth-child(7),
-td:nth-child(8),
-td:nth-child(9){
-
-    text-align:center;
+    font-weight: bold;
 
 }
 
 
-/* ===============================
-   ANIMACJE
-================================ */
 
-.fadeOut{
+#rightInfo {
 
-    opacity:0;
-
-    transform:translateX(-40px);
+    text-align: right;
 
 }
 
-.fadeIn{
 
-    opacity:1;
 
-    transform:translateX(0px);
+#sheetCounter {
+
+    font-size: 26px;
+
+    font-weight: bold;
 
 }
+
+
+
+#lastUpdate {
+
+    margin-top: 8px;
+
+    font-size: 18px;
+
+    color: #666;
+
+}
+
 
 
 /* ===============================
    PASEK POSTĘPU
 ================================ */
 
-footer{
-
-    height:7px;
-
-    background:#dddddd;
-
-    flex-shrink:0;
-
-}
-
-#progress{
-
-    width:0%;
-
-    height:100%;
-
-    background:#2d7ff9;
-
-}
-
-.titleLine {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
 
 #progressBar {
 
     width: 250px;
-    height: 8px;
 
-    background: #444;
+    height: 10px;
+
+    background: #dddddd;
 
     overflow: hidden;
+
+    border-radius: 3px;
 
 }
 
 
+
 #progress {
 
-    height: 100%;
     width: 0%;
 
-    background: #00aaff;
+    height: 100%;
+
+    background: #2d7ff9;
+
+}
+
+
+
+/* ===============================
+   OBSZAR TABELI
+================================ */
+
+
+main {
+
+    flex: 1;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    position: relative;
+
+}
+
+
+
+/* ===============================
+   TABELA TV VIEW
+================================ */
+
+
+#productionTable {
+
+    width: 100%;
+
+    height: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    background: white;
+
+}
+
+
+
+/* nagłówki */
+
+
+thead {
+
+    background: white;
+
+}
+
+
+
+thead tr:first-child th {
+
+    font-weight: bold;
+
+}
+
+
+
+thead tr:nth-child(2) th {
+
+    font-weight: bold;
+
+}
+
+
+
+/* komórki */
+
+
+th,
+td {
+
+    border: 1px solid #333;
+
+    text-align: center;
+
+    vertical-align: middle;
+
+    padding: 5px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+
+/* szerokość wszystkich kolumn */
+
+th,
+td {
+
+    width: auto;
+
+}
+
+
+
+/* zebra */
+
+
+tbody tr:nth-child(odd) {
+
+    background: #dcdcdc;
+
+}
+
+
+
+tbody tr:nth-child(even) {
+
+    background: white;
+
+}
+
+
+
+/* ===============================
+   ANIMACJE ZMIANY ARKUSZA
+================================ */
+
+
+.fadeOut {
+
+    opacity: 0;
+
+    transform: translateX(-40px);
+
+}
+
+
+
+.fadeIn {
+
+    opacity: 1;
+
+    transform: translateX(0);
+
+}
+
+
+
+/* ===============================
+   DOPASOWANIE TV
+================================ */
+
+
+@media (min-width: 1200px) {
+
+
+    th,
+    td {
+
+        font-size: clamp(12px, 1.5vw, 24px);
+
+    }
+
+
+}
+
+
+
+@media (max-width: 1200px) {
+
+
+    th,
+    td {
+
+        font-size: clamp(10px, 1.2vw, 18px);
+
+    }
+
 
 }
