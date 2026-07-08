@@ -189,6 +189,7 @@ function drawSheet(index){
                 .includes("production")
         ){
 
+            console.log("ZNALEZIONO PRODUCTION:", rows[i]);
             tr.classList.add("productionRow");
 
         }
@@ -207,6 +208,7 @@ function drawSheet(index){
             isOldDate(rows[i][dateIndex])
         ){
 
+            console.log("STARA DATA:", rows[i][dateIndex], rows[i]);
             tr.classList.add("oldDate");
 
         }
