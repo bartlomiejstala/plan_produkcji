@@ -198,7 +198,7 @@ function drawSheet(index){
             rows[i][statusIndex]
                 .toString()
                 .toLowerCase()
-                === "production"
+                .includes("production")
         ){
 
             tr.classList.add("productionRow");
@@ -374,12 +374,58 @@ function isOldDate(value){
 
 
 
-    const date =
-        new Date(value);
+    let date;
 
 
 
-    if(isNaN(date))
+    // format yyyy-mm-dd
+
+    if(value.toString().includes("-")){
+
+
+        date = new Date(value);
+
+
+    }
+
+
+    // format dd.mm.yyyy
+
+    else if(value.toString().includes(".")){
+
+
+        const p =
+            value.toString().split(".");
+
+
+        if(p.length===3){
+
+
+            date =
+                new Date(
+                    p[2],
+                    p[1]-1,
+                    p[0]
+                );
+
+
+        }
+
+
+    }
+
+
+
+    else {
+
+        date = new Date(value);
+
+    }
+
+
+
+    if(!date || isNaN(date))
+
         return false;
 
 
@@ -388,16 +434,14 @@ function isOldDate(value){
         new Date();
 
 
+
     today.setHours(0,0,0,0);
-
-
 
     date.setHours(0,0,0,0);
 
 
 
     return date < today;
-
 
 
 }
