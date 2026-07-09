@@ -498,7 +498,7 @@ tbody tr:nth-child(even){
 #productionTable th.smallColumn,
 #productionTable td.smallColumn {
 
-    width:150px !important;
+    width:200px !important;
 
 }
 
