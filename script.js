@@ -39,6 +39,7 @@ const progress = document.getElementById("progress");
 
 
 
+
 // ===============================
 // POBIERANIE DANYCH
 // ===============================
@@ -49,14 +50,10 @@ async function loadData() {
 
         const response = await fetch(API_URL);
 
+        const text = await response.text();
 
-const text = await response.text();
+        const json = JSON.parse(text);
 
-
-
-
-
-const json = JSON.parse(text);
 
         sheets = json.sheets;
 
@@ -96,6 +93,19 @@ const json = JSON.parse(text);
 function drawSheet(index){
 
 
+    const table = document.getElementById("productionTable");
+
+
+    /*
+       animacja wyjścia starej tabeli
+    */
+
+    table.classList.remove("fadeIn");
+
+    table.classList.add("fadeOut");
+
+
+
     const sheet = sheets[index];
 
 
@@ -104,118 +114,155 @@ function drawSheet(index){
 
 
 
-    machineName.textContent =
-        sheet.name;
+    setTimeout(function(){
 
 
 
-    sheetCounter.textContent =
-        "Arkusz " +
-        (index + 1) +
-        " / " +
-        sheets.length;
+        machineName.textContent =
+            sheet.name;
 
 
 
-    tableHead.innerHTML="";
-    tableBody.innerHTML="";
+        sheetCounter.textContent =
+            "Arkusz " +
+            (index + 1) +
+            " / " +
+            sheets.length;
 
 
 
-    const rows = sheet.rows;
+        tableHead.innerHTML="";
+
+        tableBody.innerHTML="";
 
 
 
-    if(!rows || rows.length < 2)
-        return;
+        const rows = sheet.rows;
 
 
 
-    const headers = rows[1];
+        if(!rows || rows.length < 2)
+            return;
 
 
 
-    createHeaderRow(headers);
-
-    
+        const headers = rows[1];
 
 
 
-    const statusIndex =
-        findColumn(headers,"Status");
-
-
-    const dateIndex =
-        findColumn(headers,"Data");
+        createHeaderRow(headers);
 
 
 
-    for(let i=2;i<rows.length;i++){
-
-    const row = rows[i];
-
-    const tr = document.createElement("tr");
-
-    
-
-    row.forEach((value,index)=>{
-   
-        const td = document.createElement("td");
-
-        td.textContent = value;
-
-        applyColumnWidth(
-            td,
-            headers[index]
-        );
-
-        tr.appendChild(td);
-
-    });
+        const statusIndex =
+            findColumn(headers,"Status");
 
 
 
+        const dateIndex =
+            findColumn(headers,"Data");
 
-// ===============================
-// PRODUCTION
-// ===============================
 
-if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
-   
-    tr.classList.add("productionRow");
-}
 
+        for(let i=2;i<rows.length;i++){
+
+
+            const row = rows[i];
+
+
+            const tr = document.createElement("tr");
+
+
+
+            row.forEach(function(value,index){
+
+
+                const td =
+                    document.createElement("td");
+
+
+                td.textContent = value;
+
+
+                applyColumnWidth(
+                    td,
+                    headers[index]
+                );
+
+
+                tr.appendChild(td);
+
+
+            });
 
 
 
 
-        // ===============================
-        // STARA DATA
-        // ===============================
+
+            // ===============================
+            // PRODUCTION
+            // ===============================
 
 
-        if(
-            dateIndex >= 0 &&
-            isOldDate(rows[i][dateIndex])
-        ){
+            if (
+                row[statusIndex] &&
+                row[statusIndex]
+                .toLowerCase()
+                .indexOf("production") !== -1
+            ){
 
-           
-            tr.classList.add("oldDate");
-           
+                tr.classList.add("productionRow");
+
+            }
+
+
+
+
+
+
+            // ===============================
+            // STARA DATA
+            // ===============================
+
+
+            if(
+                dateIndex >= 0 &&
+                isOldDate(rows[i][dateIndex])
+            ){
+
+                tr.classList.add("oldDate");
+
+            }
+
+
+
+            tableBody.appendChild(tr);
+
+
         }
 
 
 
-        tableBody.appendChild(tr);
+        adjustTableFont();
 
 
-    }
+        resetProgress();
 
 
 
-    adjustTableFont();
+        /*
+           animacja wejścia nowej tabeli
+        */
 
-    resetProgress();
+
+        table.classList.remove("fadeOut");
+
+        table.classList.add("fadeIn");
+
+
+
+    },350);
+
 
 
 }
@@ -235,7 +282,8 @@ function createHeaderRow(values){
     const tr=document.createElement("tr");
 
 
-    values.forEach(value=>{
+
+    values.forEach(function(value){
 
 
         const th=document.createElement("th");
@@ -250,7 +298,9 @@ function createHeaderRow(values){
         tr.appendChild(th);
 
 
+
     });
+
 
 
     tableHead.appendChild(tr);
@@ -269,17 +319,22 @@ function createHeaderRow(values){
 
 function findColumn(headers,name){
 
-    return headers.findIndex(h =>
 
-        h.toString()
+    return headers.findIndex(function(h){
+
+
+        return h.toString()
         .trim()
         .toLowerCase()
         .replace(/\s+/g,"")
         ===
         name.toLowerCase()
-        .replace(/\s+/g,"")
+        .replace(/\s+/g,"");
 
-    );
+
+    });
+
+
 
 }
 
@@ -299,11 +354,13 @@ function applyColumnWidth(cell,name){
         return;
 
 
+
     const n =
         name
         .toString()
         .toLowerCase()
         .trim();
+
 
 
 
@@ -403,9 +460,14 @@ function adjustTableFont(){
 
     let columns = 0;
 
-if (tableHead.rows.length > 0) {
-    columns = tableHead.rows[0].cells.length;
-}
+
+
+    if(tableHead.rows.length > 0){
+
+        columns =
+            tableHead.rows[0].cells.length;
+
+    }
 
 
 
@@ -441,9 +503,11 @@ if (tableHead.rows.length > 0) {
     .querySelectorAll(
         "#productionTable th,#productionTable td"
     )
-    .forEach(c=>{
+    .forEach(function(c){
+
 
         c.style.fontSize=size;
+
 
     });
 
@@ -466,7 +530,8 @@ function startSheetRotation(){
 
 
 
-    changeTimer=setInterval(()=>{
+    changeTimer=setInterval(function(){
+
 
 
         if(sheets.length<=1)
@@ -491,6 +556,7 @@ function startSheetRotation(){
     },CHANGE_INTERVAL);
 
 
+
 }
 
 
@@ -504,14 +570,18 @@ function startSheetRotation(){
 
 function resetProgress(){
 
+
     progressStart=Date.now();
+
 
 
     if(progress)
 
         progress.style.width="0%";
 
+
 }
+
 
 
 
@@ -523,7 +593,8 @@ function startProgress(){
 
 
 
-    progressTimer=setInterval(()=>{
+    progressTimer=setInterval(function(){
+
 
 
         if(!progress)
@@ -558,6 +629,7 @@ function startProgress(){
 
 
 
+
 // ===============================
 // ODŚWIEŻANIE
 // ===============================
@@ -569,7 +641,7 @@ function startRefreshTimer(){
 
 
 
-    refreshTimer=setInterval(()=>{
+    refreshTimer=setInterval(function(){
 
 
         loadData();
@@ -580,6 +652,8 @@ function startRefreshTimer(){
 
 
 }
+
+
 
 
 
