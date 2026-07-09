@@ -354,7 +354,8 @@ tbody tr:nth-child(even){
     text-decoration:underline;
 
     font-weight:bold;
-
+   text-shadow:
+        0 0 8px rgba(80,255,150,0.8);
 
     background:
         rgba(0,255,120,0.18);
