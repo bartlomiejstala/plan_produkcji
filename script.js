@@ -53,8 +53,7 @@ async function loadData() {
 const text = await response.text();
 
 
-console.log("ODPOWIEDŹ GOOGLE:");
-console.log(text);
+
 
 
 const json = JSON.parse(text);
@@ -157,15 +156,10 @@ function drawSheet(index){
 
     const tr = document.createElement("tr");
 
-    console.log("WIERSZ:", row);
-    console.log("STATUS:", JSON.stringify(row[statusIndex]));
-    console.log(row[statusIndex] === "Production");
-    console.log(row[statusIndex].toLowerCase());
-    console.log("DATA:", row[dateIndex]);
+    
 
     row.forEach((value,index)=>{
-    console.log("statusIndex =", statusIndex);
-    console.log("dateIndex =", dateIndex);
+   
         const td = document.createElement("td");
 
         td.textContent = value;
@@ -187,7 +181,7 @@ function drawSheet(index){
 // ===============================
 
 if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
-    console.log("PRODUCTION ZNALEZIONE", row);
+   
     tr.classList.add("productionRow");
 }
 
@@ -205,9 +199,9 @@ if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
             isOldDate(rows[i][dateIndex])
         ){
 
-            console.log("STARA DATA:", rows[i][dateIndex], rows[i]);
+           
             tr.classList.add("oldDate");
-            console.log("STARA DATA KLASA DODANA", rows[i][dateIndex]);
+           
         }
 
 
