@@ -407,8 +407,11 @@ function isOldDate(value){
 function adjustTableFont(){
 
 
-    const columns =
-        tableHead.rows[0]?.cells.length;
+    let columns = 0;
+
+if (tableHead.rows.length > 0) {
+    columns = tableHead.rows[0].cells.length;
+}
 
 
 
