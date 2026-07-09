@@ -132,7 +132,7 @@ function drawSheet(index){
 
 
 
-    const headers = rows[0];
+    const headers = rows[1];
 
 
 
@@ -153,33 +153,29 @@ function drawSheet(index){
 
     for(let i=2;i<rows.length;i++){
 
+    const row = rows[i];
 
-        const tr=document.createElement("tr");
-            console.log("WIERSZ:", row);
-            console.log("STATUS:", row[statusIndex]);
-            console.log("DATA:", row[dateIndex]);
+    const tr = document.createElement("tr");
 
+    console.log("WIERSZ:", row);
+    console.log("STATUS:", row[statusIndex]);
+    console.log("DATA:", row[dateIndex]);
 
-        rows[i].forEach((value,index)=>{
+    row.forEach((value,index)=>{
+    console.log("statusIndex =", statusIndex);
+    console.log("dateIndex =", dateIndex);
+        const td = document.createElement("td");
 
+        td.textContent = value;
 
-            const td=document.createElement("td");
+        applyColumnWidth(
+            td,
+            headers[index]
+        );
 
+        tr.appendChild(td);
 
-            td.textContent=value;
-
-
-            applyColumnWidth(
-                td,
-                headers[index]
-            );
-
-
-            tr.appendChild(td);
-
-
-
-        });
+    });
 
 
 
@@ -209,7 +205,7 @@ if (row[statusIndex] && row[statusIndex].toLowerCase().includes("production")) {
 
             console.log("STARA DATA:", rows[i][dateIndex], rows[i]);
             tr.classList.add("oldDate");
-            onsole.log("STARA DATA KLASA DODANA", rows[i][dateIndex]);
+            console.log("STARA DATA KLASA DODANA", rows[i][dateIndex]);
         }
 
 
