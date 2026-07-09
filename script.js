@@ -379,21 +379,28 @@ function applyColumnWidth(cell,name){
 
 
     else if(
-        n==="ilość" ||
-        n==="ok" ||
-        n==="scrap"
-    ){
+    n==="ilość" ||
+    n==="ok" ||
+    n==="scrap"
+){
 
-        cell.classList.add("qtyColumn");
+    cell.classList.add("qtyColumn");
 
-    }
+}
 
 
-    else if(n==="data"){
+else if(n==="nesting"){
 
-        cell.classList.add("dateColumn");
+    cell.classList.add("nestingColumn");
 
-    }
+}
+
+
+else if(n==="data"){
+
+    cell.classList.add("dateColumn");
+
+}
 
 
 }
