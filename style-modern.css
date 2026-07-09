@@ -497,7 +497,7 @@ tbody tr:nth-child(even){
 
 .smallColumn {
 
-    width:150px;
+    width:170px;
 
 }
 
@@ -529,6 +529,6 @@ tbody tr:nth-child(even){
 
 .nestingColumn {
 
-    width:110px;
+    width:80px;
 
 }
