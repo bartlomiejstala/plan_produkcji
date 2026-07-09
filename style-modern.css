@@ -548,3 +548,57 @@ tbody tr:nth-child(even){
     min-width:0;
 
 }
+
+
+/* =====================================
+   PRODUCTION BADGE
+===================================== */
+
+
+.productionBadge {
+
+
+    display:inline-block;
+
+
+    padding:
+
+        6px 18px;
+
+
+
+    border-radius:
+
+        30px;
+
+
+
+    background:
+
+        rgba(0,255,120,0.25);
+
+
+
+    border:
+
+        1px solid rgba(120,255,180,0.5);
+
+
+
+    font-weight:
+
+        bold;
+
+
+
+    color:white;
+
+
+
+    box-shadow:
+
+        0 0 12px rgba(80,255,150,0.6);
+
+
+
+}
