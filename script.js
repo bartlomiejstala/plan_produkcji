@@ -138,7 +138,7 @@ function drawSheet(index){
 
     createHeaderRow(headers);
 
-    createHeaderRow(rows[1]);
+    
 
 
 
@@ -158,7 +158,9 @@ function drawSheet(index){
     const tr = document.createElement("tr");
 
     console.log("WIERSZ:", row);
-    console.log("STATUS:", row[statusIndex]);
+    console.log("STATUS:", JSON.stringify(row[statusIndex]));
+    console.log(row[statusIndex] === "Production");
+    console.log(row[statusIndex].toLowerCase());
     console.log("DATA:", row[dateIndex]);
 
     row.forEach((value,index)=>{
