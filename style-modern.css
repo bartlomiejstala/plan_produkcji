@@ -523,4 +523,12 @@ tbody tr:nth-child(even){
 
     width:160px;
 
+
+}
+
+
+.nestingColumn {
+
+    width:110px;
+
 }
