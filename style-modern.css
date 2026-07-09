@@ -417,3 +417,37 @@ tbody tr:nth-child(even){
     width:160px;
 
 }
+
+/* =====================================
+   PRIORYTETY STATUSÓW
+===================================== */
+
+
+/* Production */
+
+.productionRow td {
+
+    text-decoration:underline;
+    font-weight:bold;
+
+    text-shadow:
+        0 0 8px rgba(80,255,150,0.8);
+
+}
+
+
+/* Stara data ma zawsze najwyższy priorytet */
+
+.oldDate td {
+
+    color:#ff7070 !important;
+
+    font-weight:bold;
+
+    background:
+        rgba(255,0,0,0.25) !important;
+
+    text-shadow:
+        0 0 8px rgba(255,80,80,0.8);
+
+}
