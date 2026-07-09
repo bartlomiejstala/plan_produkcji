@@ -205,15 +205,29 @@ function drawSheet(index){
 
 
             if (
-                row[statusIndex] &&
-                row[statusIndex]
-                .toLowerCase()
-                .indexOf("production") !== -1
-            ){
+    row[statusIndex] &&
+    row[statusIndex]
+    .toLowerCase()
+    .indexOf("production") !== -1
+){
 
-                tr.classList.add("productionRow");
+    tr.classList.add("productionRow");
 
-            }
+
+    const statusCell =
+        tr.cells[statusIndex];
+
+
+    if(statusCell){
+
+        statusCell.innerHTML =
+            "<span class='productionBadge'>" +
+            statusCell.textContent +
+            "</span>";
+
+    }
+
+}
 
 
 
