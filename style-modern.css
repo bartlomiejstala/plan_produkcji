@@ -534,7 +534,7 @@ tbody tr:nth-child(even){
 #productionTable th.nestingColumn,
 #productionTable td.nestingColumn {
 
-    width:130px !important;
+    width:150px !important;
 
 }
 
