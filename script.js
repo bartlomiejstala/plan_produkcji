@@ -36,7 +36,7 @@ const sheetCounter = document.getElementById("sheetCounter");
 const updateLabel = document.getElementById("lastUpdate");
 
 const progress = document.getElementById("progress");
-
+const countdown = document.getElementById("countdown");
 
 
 
@@ -260,8 +260,22 @@ function drawSheet(index){
         adjustTableFont();
 
 
-        resetProgress();
+       // ===============================
+// PASEK POSTĘPU
+// ===============================
 
+function resetProgress(){
+
+    progressStart = Date.now();
+
+    if(progress)
+        progress.style.width = "0%";
+
+    if(countdown)
+        countdown.textContent =
+            Math.ceil(CHANGE_INTERVAL / 1000) + " s";
+
+}
 
 
         /*
@@ -609,40 +623,46 @@ function resetProgress(){
 
 function startProgress(){
 
-
     clearInterval(progressTimer);
 
-
-
-    progressTimer=setInterval(function(){
-
-
+    progressTimer = setInterval(function(){
 
         if(!progress)
             return;
 
-
+        const elapsed =
+            Date.now() - progressStart;
 
         let percent =
-            ((Date.now()-progressStart)
-            /CHANGE_INTERVAL)*100;
+            (elapsed / CHANGE_INTERVAL) * 100;
 
-
-
-        if(percent>100)
-
-            percent=100;
-
-
+        if(percent > 100)
+            percent = 100;
 
         progress.style.width =
-            percent+"%";
+            percent + "%";
 
 
+        // ===============================
+        // ODLICZANIE
+        // ===============================
+
+        if(countdown){
+
+            const secondsLeft =
+                Math.max(
+                    0,
+                    Math.ceil(
+                        (CHANGE_INTERVAL - elapsed) / 1000
+                    )
+                );
+
+            countdown.textContent =
+                secondsLeft + " s";
+
+        }
 
     },100);
-
-
 
 }
 
