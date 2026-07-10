@@ -584,6 +584,12 @@ function startSheetRotation(){
 
 
 
+        // reset licznika i paska od razu po zmianie
+
+        resetProgress();
+
+
+
         drawSheet(currentSheet);
 
 
@@ -593,7 +599,6 @@ function startSheetRotation(){
 
 
 }
-
 
 
 
