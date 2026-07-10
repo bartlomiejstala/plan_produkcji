@@ -36,7 +36,7 @@ const sheetCounter = document.getElementById("sheetCounter");
 const updateLabel = document.getElementById("lastUpdate");
 
 const progress = document.getElementById("progress");
-const countdown = document.getElementById("countdown");
+
 
 
 
