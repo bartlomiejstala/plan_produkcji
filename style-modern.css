@@ -495,52 +495,62 @@ tbody tr:nth-child(even){
 ===================================== */
 
 
-#productionTable th.smallColumn,
-#productionTable td.smallColumn {
+/* Status */
+
+#productionTable th.statusColumn,
+#productionTable td.statusColumn {
 
     width:200px !important;
+    max-width:200px;
 
 }
 
 
+/* Nr zlecenia */
 
 #productionTable th.orderColumn,
 #productionTable td.orderColumn {
 
     width:100px !important;
+    max-width:100px;
 
 }
 
 
+/* Ilość / OK / Scrap */
 
 #productionTable th.qtyColumn,
 #productionTable td.qtyColumn {
 
     width:75px !important;
+    max-width:75px;
 
 }
 
 
+/* Data */
 
 #productionTable th.dateColumn,
 #productionTable td.dateColumn {
 
     width:160px !important;
+    max-width:160px;
 
 }
 
 
+/* Nesting */
 
 #productionTable th.nestingColumn,
 #productionTable td.nestingColumn {
 
     width:150px !important;
+    max-width:150px;
 
 }
 
 
-
-/* dodatkowa kontrola dla fixed table layout */
+/* Dodatkowa kontrola dla fixed layout */
 
 #productionTable th,
 #productionTable td {
