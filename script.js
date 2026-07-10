@@ -5,6 +5,9 @@
 const CHANGE_INTERVAL = 30000;
 const REFRESH_INTERVAL = 900000;
 
+// pełne odświeżenie strony co 30 minut
+const PAGE_RELOAD_INTERVAL = 1800000;
+
 
 // ===============================
 // ZMIENNE
@@ -692,7 +695,19 @@ function startRefreshTimer(){
 }
 
 
+// ===============================
+// AUTOMATYCZNE ODŚWIEŻENIE STRONY
+// ===============================
 
+function startPageReloadTimer(){
+
+    setInterval(function(){
+
+        location.reload();
+
+    }, PAGE_RELOAD_INTERVAL);
+
+}
 
 
 
@@ -705,3 +720,5 @@ loadData();
 startProgress();
 
 startRefreshTimer();
+
+startPageReloadTimer();
