@@ -380,7 +380,7 @@ function applyColumnWidth(cell,name){
 
     if(n==="status"){
 
-        cell.classList.add("smallColumn");
+         cell.classList.add("statusColumn");
 
     }
 
