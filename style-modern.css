@@ -734,6 +734,8 @@ tbody tr:nth-child(even){
 
 /* pojedyncza zakładka */
 
+/* pojedyncza zakładka */
+
 .sheetTab {
 
     position: relative;
@@ -744,7 +746,7 @@ tbody tr:nth-child(even){
 
     height: 42px;
 
-    padding: 6px 5px;
+    padding: 6px 4px;
 
     display: flex;
 
@@ -754,13 +756,18 @@ tbody tr:nth-child(even){
 
     text-align: center;
 
-    font-size: 12px;
+
+    font-size: clamp(10px, 1.1vw, 12px);
 
     white-space: nowrap;
 
     overflow: hidden;
 
     text-overflow: ellipsis;
+
+
+    border-radius: 12px 12px 0 0;
+
 
     cursor: default;
 
@@ -779,37 +786,7 @@ tbody tr:nth-child(even){
 
 
 
-/* animowany pasek pod zakładką */
 
-.sheetTab::after {
-
-    content: "";
-
-    position: absolute;
-
-    bottom: 0;
-
-    left: 15%;
-
-    width: 70%;
-
-    height: 3px;
-
-    border-radius: 5px;
-
-    background: transparent;
-
-
-    transform: scaleX(0);
-
-
-    transition:
-
-        background 0.35s ease,
-
-        transform 0.35s ease;
-
-}
 
 
 
@@ -827,10 +804,13 @@ tbody tr:nth-child(even){
         rgba(255,255,255,0.25);
 
 
-    color: white;
+    color:white;
 
 
-    font-weight: 800;
+    font-weight:800;
+
+
+    border-radius: 14px 14px 0 0;
 
 
     box-shadow:
@@ -841,16 +821,46 @@ tbody tr:nth-child(even){
 
 
 
-/* pasek aktywnej zakładki */
+/* animowany pasek pod zakładką */
 
-.sheetTab.active::after {
+.sheetTab::after {
 
-    background: #00e676;
+    content: "";
 
-    transform: scaleX(1);
+    position: absolute;
+
+    bottom: 0;
+
+    left: 20%;
+
+    width: 60%;
+
+    height: 3px;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+
+    transform: scaleX(0);
+
+
+    transition:
+
+        background 0.35s ease,
+
+        transform 0.35s ease;
 
 }
 
+
+.sheetTab.active::after {
+
+    background:#00e676;
+
+    transform:scaleX(1);
+
+}
 
 
 /* efekt najechania (zostawiamy, ale delikatny) */
