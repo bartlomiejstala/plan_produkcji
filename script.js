@@ -2,6 +2,7 @@
 // USTAWIENIA
 // ===============================
 
+
 const CHANGE_INTERVAL = 30000;
 const REFRESH_INTERVAL = 900000;
 
