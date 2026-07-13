@@ -96,14 +96,11 @@ async function loadData() {
 
 function drawSheetTabs(){
 
-
     if(!sheetTabs)
         return;
 
 
-
     sheetTabs.innerHTML = "";
-
 
 
     sheets.forEach(function(sheet,index){
@@ -115,17 +112,16 @@ function drawSheetTabs(){
         tab.classList.add("sheetTab");
 
 
-
         if(index === currentSheet){
 
-            tab.classList.add("active");
+            setTimeout(function(){
+                tab.classList.add("active");
+            }, 50);
 
         }
 
 
-
         tab.textContent = sheet.name;
-
 
 
         sheetTabs.appendChild(tab);
