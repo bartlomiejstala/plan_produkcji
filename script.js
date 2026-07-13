@@ -103,48 +103,46 @@ async function loadData() {
 // ZAKŁADKI ARKUSZY
 // ===============================
 
-function drawSheetTabs(){
+function drawSheetTabs() {
 
-
-    if(!sheetTabs)
-        return;
-
-
+    if (!sheetTabs) return;
 
     sheetTabs.innerHTML = "";
 
-
-
-    sheets.forEach(function(sheet,index){
-
+    sheets.forEach(function (sheet, index) {
 
         const tab = document.createElement("div");
 
+        tab.className = "sheetTab";
 
-        tab.classList.add("sheetTab");
-
-
-
-        if(index === currentSheet){
-
-            setTimeout(function(){
-
+        if (index === currentSheet) {
+            requestAnimationFrame(() => {
                 tab.classList.add("active");
-
-            },50);
-
+            });
         }
-
-
 
         tab.textContent = sheet.name;
 
+        tab.title = sheet.name;
+
+        tab.addEventListener("click", function () {
+
+            if (index === currentSheet)
+                return;
+
+            currentSheet = index;
+
+            drawSheet(currentSheet);
+
+            resetProgress();
+
+            startSheetRotation();
+
+        });
 
         sheetTabs.appendChild(tab);
 
-
     });
-
 
 }
 
