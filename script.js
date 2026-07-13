@@ -33,6 +33,7 @@ let progressStart = Date.now();
 
 const tableHead = document.querySelector("#productionTable thead");
 const tableBody = document.querySelector("#productionTable tbody");
+const sheetTabs = document.getElementById("sheetTabs");
 
 const machineName = document.getElementById("machineName");
 const sheetCounter = document.getElementById("sheetCounter");
@@ -88,6 +89,52 @@ async function loadData() {
 
 
 
+// ===============================
+// ZAKŁADKI ARKUSZY
+// ===============================
+
+function drawSheetTabs(){
+
+
+    if(!sheetTabs)
+        return;
+
+
+
+    sheetTabs.innerHTML = "";
+
+
+
+    sheets.forEach(function(sheet,index){
+
+
+        const tab = document.createElement("div");
+
+
+        tab.classList.add("sheetTab");
+
+
+
+        if(index === currentSheet){
+
+            tab.classList.add("active");
+
+        }
+
+
+
+        tab.textContent = sheet.name;
+
+
+
+        sheetTabs.appendChild(tab);
+
+
+    });
+
+
+}
+
 
 // ===============================
 // RYSOWANIE ARKUSZA
@@ -123,7 +170,8 @@ function drawSheet(index){
 
         machineName.textContent =
             sheet.name;
-
+        
+        drawSheetTabs();
 
 
         sheetCounter.textContent =
