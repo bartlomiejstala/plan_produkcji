@@ -2,7 +2,6 @@
 // USTAWIENIA
 // ===============================
 
-
 const CHANGE_INTERVAL = 30000;
 const REFRESH_INTERVAL = 900000;
 
@@ -18,14 +17,13 @@ let sheets = [];
 
 let currentSheet = 0;
 
-let changeTimer;
+let changeTimer = null;
 
-let refreshTimer;
+let refreshTimer = null;
 
-let progressTimer;
+let progressTimer = null;
 
 let progressStart = Date.now();
-
 
 
 // ===============================
@@ -44,7 +42,6 @@ const progress = document.getElementById("progress");
 
 
 
-
 // ===============================
 // POBIERANIE DANYCH
 // ===============================
@@ -60,7 +57,7 @@ async function loadData() {
         const json = JSON.parse(text);
 
 
-        sheets = json.sheets;
+        sheets = json.sheets || [];
 
 
         updateLabel.textContent =
@@ -70,9 +67,21 @@ async function loadData() {
 
         if (sheets.length > 0) {
 
-            currentSheet = 0;
+
+            // zabezpieczenie gdyby liczba arkuszy się zmieniła
+
+            if(currentSheet >= sheets.length){
+
+                currentSheet = 0;
+
+            }
+
 
             drawSheet(currentSheet);
+
+
+            resetProgress();
+
 
             startSheetRotation();
 
@@ -82,7 +91,7 @@ async function loadData() {
     }
     catch(e){
 
-        console.error(e);
+        console.error("Błąd pobierania danych:", e);
 
     }
 
@@ -96,11 +105,14 @@ async function loadData() {
 
 function drawSheetTabs(){
 
+
     if(!sheetTabs)
         return;
 
 
+
     sheetTabs.innerHTML = "";
+
 
 
     sheets.forEach(function(sheet,index){
@@ -112,13 +124,17 @@ function drawSheetTabs(){
         tab.classList.add("sheetTab");
 
 
+
         if(index === currentSheet){
 
             setTimeout(function(){
+
                 tab.classList.add("active");
-            }, 50);
+
+            },50);
 
         }
+
 
 
         tab.textContent = sheet.name;
@@ -133,6 +149,7 @@ function drawSheetTabs(){
 }
 
 
+
 // ===============================
 // RYSOWANIE ARKUSZA
 // ===============================
@@ -140,12 +157,10 @@ function drawSheetTabs(){
 function drawSheet(index){
 
 
-    const table = document.getElementById("productionTable");
+    const table =
+        document.getElementById("productionTable");
 
 
-    /*
-       animacja wyjścia starej tabeli
-    */
 
     table.classList.remove("fadeIn");
 
@@ -154,6 +169,7 @@ function drawSheet(index){
 
 
     const sheet = sheets[index];
+
 
 
     if(!sheet)
@@ -167,8 +183,11 @@ function drawSheet(index){
 
         machineName.textContent =
             sheet.name;
-        
+
+
+
         drawSheetTabs();
+
 
 
         sheetCounter.textContent =
@@ -179,9 +198,9 @@ function drawSheet(index){
 
 
 
-        tableHead.innerHTML="";
+        tableHead.innerHTML = "";
 
-        tableBody.innerHTML="";
+        tableBody.innerHTML = "";
 
 
 
@@ -189,8 +208,15 @@ function drawSheet(index){
 
 
 
-        if(!rows || rows.length < 2)
+        if(!rows || rows.length < 2){
+
+            table.classList.remove("fadeOut");
+
+            table.classList.add("fadeIn");
+
             return;
+
+        }
 
 
 
@@ -212,13 +238,14 @@ function drawSheet(index){
 
 
 
-        for(let i=2;i<rows.length;i++){
+        for(let i = 2; i < rows.length; i++){
 
 
             const row = rows[i];
 
 
-            const tr = document.createElement("tr");
+            const tr =
+                document.createElement("tr");
 
 
 
@@ -245,40 +272,37 @@ function drawSheet(index){
 
 
 
-
-
             // ===============================
             // PRODUCTION
             // ===============================
 
-
-            if (
-    row[statusIndex] &&
-    row[statusIndex]
-    .toLowerCase()
-    .indexOf("production") !== -1
-){
-
-    tr.classList.add("productionRow");
+            if(
+                row[statusIndex] &&
+                row[statusIndex]
+                .toLowerCase()
+                .includes("production")
+            ){
 
 
-    const statusCell =
-        tr.cells[statusIndex];
+                tr.classList.add("productionRow");
 
 
-    if(statusCell){
-
-        statusCell.innerHTML =
-            "<span class='productionBadge'>" +
-            statusCell.textContent +
-            "</span>";
-
-    }
-
-}
+                const statusCell =
+                    tr.cells[statusIndex];
 
 
 
+                if(statusCell){
+
+
+                    statusCell.innerHTML =
+                        "<span class='productionBadge'>" +
+                        statusCell.textContent +
+                        "</span>";
+
+                }
+
+            }
 
 
 
@@ -289,7 +313,7 @@ function drawSheet(index){
 
             if(
                 dateIndex >= 0 &&
-                isOldDate(rows[i][dateIndex])
+                isOldDate(row[dateIndex])
             ){
 
                 tr.classList.add("oldDate");
@@ -308,27 +332,6 @@ function drawSheet(index){
         adjustTableFont();
 
 
-       // ===============================
-// PASEK POSTĘPU
-// ===============================
-
-function resetProgress(){
-
-    progressStart = Date.now();
-
-
-    if(progress)
-
-        progress.style.width = "0%";
-
-
-}
-
-
-        /*
-           animacja wejścia nowej tabeli
-        */
-
 
         table.classList.remove("fadeOut");
 
@@ -339,13 +342,7 @@ function resetProgress(){
     },350);
 
 
-
 }
-
-
-
-
-
 
 // ===============================
 // NAGŁÓWKI
@@ -354,24 +351,25 @@ function resetProgress(){
 function createHeaderRow(values){
 
 
-    const tr=document.createElement("tr");
+    const tr =
+        document.createElement("tr");
 
 
 
     values.forEach(function(value){
 
 
-        const th=document.createElement("th");
+        const th =
+            document.createElement("th");
 
 
-        th.textContent=value;
+        th.textContent = value;
 
 
         applyColumnWidth(th,value);
 
 
         tr.appendChild(th);
-
 
 
     });
@@ -386,8 +384,6 @@ function createHeaderRow(values){
 
 
 
-
-
 // ===============================
 // SZUKANIE KOLUMNY
 // ===============================
@@ -398,22 +394,21 @@ function findColumn(headers,name){
     return headers.findIndex(function(h){
 
 
-        return h.toString()
+        return h
+        .toString()
         .trim()
         .toLowerCase()
         .replace(/\s+/g,"")
         ===
-        name.toLowerCase()
+        name
+        .toLowerCase()
         .replace(/\s+/g,"");
 
 
     });
 
 
-
 }
-
-
 
 
 
@@ -438,10 +433,9 @@ function applyColumnWidth(cell,name){
 
 
 
-
     if(n==="status"){
 
-         cell.classList.add("statusColumn");
+        cell.classList.add("statusColumn");
 
     }
 
@@ -454,33 +448,31 @@ function applyColumnWidth(cell,name){
 
 
     else if(
-    n==="ilość" ||
-    n==="ok" ||
-    n==="scrap"
-){
+        n==="ilość" ||
+        n==="ok" ||
+        n==="scrap"
+    ){
 
-    cell.classList.add("qtyColumn");
+        cell.classList.add("qtyColumn");
+
+    }
+
+
+    else if(n==="nesting"){
+
+        cell.classList.add("nestingColumn");
+
+    }
+
+
+    else if(n==="data"){
+
+        cell.classList.add("dateColumn");
+
+    }
+
 
 }
-
-
-else if(n==="nesting"){
-
-    cell.classList.add("nestingColumn");
-
-}
-
-
-else if(n==="data"){
-
-    cell.classList.add("dateColumn");
-
-}
-
-
-}
-
-
 
 
 
@@ -497,13 +489,8 @@ function isOldDate(value){
 
 
 
-    const text =
-        value.toString().trim();
-
-
-
     const date =
-        new Date(text);
+        new Date(value.toString().trim());
 
 
 
@@ -532,9 +519,8 @@ function isOldDate(value){
 
 
 
-
 // ===============================
-// FONT
+// FONT TABELI
 // ===============================
 
 function adjustTableFont(){
@@ -562,17 +548,20 @@ function adjustTableFont(){
 
 
 
-    if(columns <=8)
+    if(columns <= 8)
 
         size="2vw";
 
-    else if(columns<=14)
+
+    else if(columns <= 14)
 
         size="1.5vw";
 
-    else if(columns<=20)
+
+    else if(columns <= 20)
 
         size="1.2vw";
+
 
     else
 
@@ -585,18 +574,16 @@ function adjustTableFont(){
     .querySelectorAll(
         "#productionTable th,#productionTable td"
     )
-    .forEach(function(c){
+    .forEach(function(cell){
 
 
-        c.style.fontSize=size;
+        cell.style.fontSize=size;
 
 
     });
 
 
 }
-
-
 
 
 
@@ -612,37 +599,39 @@ function startSheetRotation(){
 
 
 
-    changeTimer=setInterval(function(){
+    changeTimer =
+        setInterval(function(){
 
 
 
-        if(sheets.length<=1)
-            return;
+            if(sheets.length <= 1)
+                return;
 
 
 
-        currentSheet++;
+            currentSheet++;
 
 
 
-        if(currentSheet>=sheets.length)
+            if(currentSheet >= sheets.length){
 
-            currentSheet=0;
+                currentSheet = 0;
 
-
-
-        // reset licznika i paska od razu po zmianie
-
-        resetProgress();
+            }
 
 
 
-        drawSheet(currentSheet);
+            drawSheet(currentSheet);
 
 
 
-    },CHANGE_INTERVAL);
+            // synchronizacja paska
 
+            resetProgress();
+
+
+
+        },CHANGE_INTERVAL);
 
 
 }
@@ -658,13 +647,15 @@ function startSheetRotation(){
 function resetProgress(){
 
 
-    progressStart=Date.now();
+    progressStart = Date.now();
 
 
 
-    if(progress)
+    if(progress){
 
         progress.style.width="0%";
+
+    }
 
 
 }
@@ -680,32 +671,39 @@ function startProgress(){
 
 
 
-    progressTimer=setInterval(function(){
-
-
-        if(!progress)
-            return;
+    progressTimer =
+        setInterval(function(){
 
 
 
-        let percent =
-            ((Date.now()-progressStart)
-            /CHANGE_INTERVAL)*100;
+            if(!progress)
+                return;
 
 
 
-        if(percent>100)
-
-            percent=100;
-
-
-
-        progress.style.width =
-            percent+"%";
+            let percent =
+                ((Date.now()-progressStart)
+                /
+                CHANGE_INTERVAL)
+                *
+                100;
 
 
 
-    },100);
+            if(percent > 100){
+
+                percent = 100;
+
+            }
+
+
+
+            progress.style.width =
+                percent + "%";
+
+
+
+        },100);
 
 
 
@@ -714,10 +712,8 @@ function startProgress(){
 
 
 
-
-
 // ===============================
-// ODŚWIEŻANIE
+// ODŚWIEŻANIE DANYCH
 // ===============================
 
 function startRefreshTimer(){
@@ -727,17 +723,19 @@ function startRefreshTimer(){
 
 
 
-    refreshTimer=setInterval(function(){
+    refreshTimer =
+        setInterval(function(){
 
 
-        loadData();
+            loadData();
 
 
-    },REFRESH_INTERVAL);
-
+        },REFRESH_INTERVAL);
 
 
 }
+
+
 
 
 // ===============================
@@ -746,13 +744,19 @@ function startRefreshTimer(){
 
 function startPageReloadTimer(){
 
+
     setInterval(function(){
+
 
         location.reload();
 
-    }, PAGE_RELOAD_INTERVAL);
+
+    },PAGE_RELOAD_INTERVAL);
+
 
 }
+
+
 
 
 
